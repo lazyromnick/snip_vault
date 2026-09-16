@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SnipVault — Collections</title>
+  <link rel="stylesheet" href="../css/style.css" />
+  <style>
+    .collections-wrap { padding: 24px; }
+    .section-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 18px;
+    }
+    .section-header h2 { font-size: 16px; font-weight: 700; }
+
+    .btn { padding: 8px 16px; border-radius: var(--radius); font-size: 13px; font-weight: 600; cursor: pointer; border: none; display: flex; align-items: center; gap: 7px; }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { opacity: .88; }
+    .btn-ghost { background: var(--bg-2); color: var(--text-2); border: 1px solid var(--border); }
+    .btn-ghost:hover { background: var(--bg-3); color: var(--text); }
+    .btn-danger { background: #3b1111; color: #f87171; border: 1px solid #5b1a1a; }
+
+    .collections-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 14px;
+      margin-bottom: 36px;
+    }
+    .collection-card {
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 18px;
+      cursor: pointer;
+      transition: border-color .15s;
+    }
+    .collection-card:hover { border-color: var(--border-2); }
+    .coll-icon { font-size: 28px; margin-bottom: 10px; }
+    .coll-name { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+    .coll-count { font-size: 12px; color: var(--text-3); }
+    .coll-preview {
+      margin-top: 12px; display: flex; flex-wrap: wrap; gap: 5px;
+    }
+    .coll-snip-pill {
+      font-size: 11px; padding: 2px 8px;
+      background: var(--bg-3); border: 1px solid var(--border);
+      border-radius: 20px; color: var(--text-2);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      max-width: 140px;
+    }
+    .coll-actions {
+      display: flex; gap: 6px; margin-top: 14px;
+    }
+
+    /* By-language section */
+    .by-lang-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 10px;
+    }
+    .lang-card {
+      background: var(--bg-2); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); padding: 14px 16px;
+      display: flex; align-items: center; gap: 12px; cursor: pointer;
+      transition: border-color .15s; text-decoration: none; color: inherit;
+    }
+    .lang-card:hover { border-color: var(--border-2); }
+    .lang-icon-sm {
+      width: 36px; height: 36px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 800; letter-spacing: -.5px;
+      flex-shrink: 0;
+    }
+    .lang-info .lang-name { font-size: 13px; font-weight: 600; }
+    .lang-info .lang-cnt  { font-size: 12px; color: var(--text-3); }
+
+    /* By-category section */
+    .by-cat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 10px;
+    }
+    .cat-card {
+      background: var(--bg-2); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); padding: 14px 16px;
+      display: flex; align-items: center; gap: 10px; cursor: pointer;
+      transition: border-color .15s; text-decoration: none; color: inherit;
+    }
+    .cat-card:hover { border-color: var(--border-2); }
+    .cat-icon { font-size: 20px; }
+    .cat-info .cat-name { font-size: 13px; font-weight: 600; }
+    .cat-info .cat-cnt  { font-size: 12px; color: var(--text-3); }
+
+    /* Create collection modal */
+    .modal-backdrop { display:none; position:fixed; inset:0; background:rgba(0,0,0,.65); z-index:200; align-items:center; justify-content:center; }
+    .modal-backdrop.open { display:flex; }
+    .modal { background:var(--bg-2); border:1px solid var(--border); border-radius:var(--radius-lg); width:90%; max-width:480px; }
+    .modal-head { padding:18px 20px 14px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+    .modal-head h2 { font-size:15px; font-weight:600; }
+    .modal-close { width:28px; height:28px; border:none; background:none; color:var(--text-2); font-size:20px; cursor:pointer; border-radius:6px; }
+    .modal-body { padding:18px 20px; display:flex; flex-direction:column; gap:12px; }
+    .modal-foot { padding:14px 20px; border-top:1px solid var(--border); display:flex; gap:8px; justify-content:flex-end; }
+    .form-group { display:flex; flex-direction:column; gap:5px; }
+    .form-group label { font-size:12px; font-weight:600; color:var(--text-2); }
+    .form-group input, .form-group select {
+      background:var(--bg); border:1px solid var(--border);
+      border-radius:var(--radius); color:var(--text);
+      font-size:13px; padding:8px 10px; outline:none; font-family:var(--sans);
+    }
+    .emoji-row { display:flex; gap:8px; flex-wrap:wrap; }
+    .emoji-opt {
+      width:36px; height:36px; border-radius:8px;
+      background:var(--bg-3); border:2px solid transparent;
+      font-size:18px; cursor:pointer;
+      display:flex; align-items:center; justify-content:center;
+      transition: border-color .12s;
+    }
+    .emoji-opt.selected { border-color: var(--accent); }
+  </style>
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="main-content">
+    <div class="topbar">
+      <span class="page-title">Collections</span>
+      <div class="topbar-actions">
+        <button class="btn btn-primary" id="newCollBtn" style="padding:7px 14px;font-size:13px">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          New collection
+        </button>
+      </div>
+    </div>
+
+    <div class="collections-wrap">
+      <!-- Custom collections -->
+      <div class="section-header">
+        <h2>My Collections</h2>
+      </div>
+      <div class="collections-grid" id="collectionsGrid"></div>
+
+      <!-- By Language -->
+      <div class="section-header">
+        <h2>Browse by Language</h2>
+      </div>
+      <div class="by-lang-grid" id="byLangGrid"></div>
+
+      <!-- By Category -->
+      <div class="section-header" style="margin-top:28px">
+        <h2>Browse by Category</h2>
+      </div>
+      <div class="by-cat-grid" id="byCatGrid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- New Collection Modal -->
+<div class="modal-backdrop" id="newCollModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h2>New Collection</h2>
+      <button class="modal-close" onclick="closeNewColl()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Collection name</label>
+        <input type="text" id="cName" placeholder="e.g. Python Interview Prep" maxlength="50" />
+      </div>
+      <div class="form-group">
+        <label>Icon</label>
+        <div class="emoji-row" id="emojiRow"></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeNewColl()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveNewColl()">Create</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+<script src="../js/data.js"></script>
+<script src="../js/ui.js"></script>
+<script>
+  const COLL_KEY = 'snipvault_collections';
+  const ICONS = ['📦','🚀','🔥','💡','📚','🎯','🛠','⚡','🌟','🧪','🔐','🎨','📊','🌐','🗄'];
+  let selectedIcon = ICONS[0];
+
+  SV.initStore();
+  document.getElementById('sidebar').innerHTML = buildSidebar('collections');
+
+  function getCollections() {
+    try { return JSON.parse(localStorage.getItem(COLL_KEY)) || []; } catch { return []; }
+  }
+  function saveCollections(c) { localStorage.setItem(COLL_KEY, JSON.stringify(c)); }
+
+  /* ── Custom Collections ─────────────────────────────────────── */
+  function renderCollections() {
+    const colls = getCollections();
+    const snippets = SV.getSnippets();
+    const grid = document.getElementById('collectionsGrid');
+
+    if (!colls.length) {
+      grid.innerHTML = `<div style="grid-column:1/-1;padding:32px;text-align:center;color:var(--text-3);background:var(--bg-2);border:1px dashed var(--border);border-radius:var(--radius-lg)">
+        <div style="font-size:28px;margin-bottom:8px">📦</div>
+        <div style="font-size:13px;color:var(--text-2)">No custom collections yet.<br>Create one to group your snippets.</div>
+      </div>`;
+      return;
+    }
+
+    grid.innerHTML = colls.map(c => {
+      const members = snippets.filter(s => (c.snippetIds||[]).includes(s.id));
+      return `
+      <div class="collection-card">
+        <div class="coll-icon">${c.icon}</div>
+        <div class="coll-name">${SV.escapeHtml(c.name)}</div>
+        <div class="coll-count">${members.length} snippet${members.length !== 1 ? 's' : ''}</div>
+        ${members.length ? `<div class="coll-preview">${members.slice(0,3).map(s =>
+          `<span class="coll-snip-pill">${SV.escapeHtml(s.title)}</span>`).join('')}
+          ${members.length > 3 ? `<span class="coll-snip-pill">+${members.length-3} more</span>` : ''}
+        </div>` : ''}
+        <div class="coll-actions">
+          <button class="btn btn-ghost" style="padding:5px 10px;font-size:12px" onclick="viewColl('${c.id}')">View</button>
+          <button class="btn btn-danger" style="padding:5px 10px;font-size:12px" onclick="deleteColl('${c.id}')">Delete</button>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  function viewColl(id) {
+    location.href = `../index.html?coll=${id}`;
+  }
+  function deleteColl(id) {
+    const colls = getCollections().filter(c => c.id !== id);
+    saveCollections(colls);
+    renderCollections();
+    document.getElementById('sidebar').innerHTML = buildSidebar('collections');
+    showToast('Collection deleted');
+  }
+  window.viewColl = viewColl;
+  window.deleteColl = deleteColl;
+
+  /* ── By Language ─────────────────────────────────────────────── */
+  function renderByLang() {
+    const snippets = SV.getSnippets();
+    const counts = {};
+    snippets.forEach(s => { counts[s.language] = (counts[s.language]||0)+1; });
+    const langs = SV.LANGUAGES.filter(l => counts[l.id]);
+
+    document.getElementById('byLangGrid').innerHTML = langs.map(l => `
+      <a class="lang-card" href="../index.html?lang=${l.id}">
+        <div class="lang-icon-sm" style="background:${l.bg};color:${l.color}">${l.abbr}</div>
+        <div class="lang-info">
+          <div class="lang-name">${l.label}</div>
+          <div class="lang-cnt">${counts[l.id]} snippet${counts[l.id]!==1?'s':''}</div>
+        </div>
+      </a>`).join('') || '<p style="color:var(--text-3);font-size:13px">No snippets yet.</p>';
+  }
+
+  /* ── By Category ─────────────────────────────────────────────── */
+  function renderByCat() {
+    const snippets = SV.getSnippets();
+    const counts = {};
+    snippets.forEach(s => { counts[s.category] = (counts[s.category]||0)+1; });
+    const cats = SV.CATEGORIES.filter(c => counts[c.id]);
+
+    document.getElementById('byCatGrid').innerHTML = cats.map(c => `
+      <a class="cat-card" href="../index.html?cat=${c.id}">
+        <div class="cat-icon">${c.icon}</div>
+        <div class="cat-info">
+          <div class="cat-name">${c.label}</div>
+          <div class="cat-cnt">${counts[c.id]} snippet${counts[c.id]!==1?'s':''}</div>
+        </div>
+      </a>`).join('') || '<p style="color:var(--text-3);font-size:13px">No snippets yet.</p>';
+  }
+
+  /* ── New collection modal ─────────────────────────────────────── */
+  document.getElementById('emojiRow').innerHTML = ICONS.map((e,i) =>
+    `<div class="emoji-opt ${i===0?'selected':''}" onclick="selectIcon('${e}',this)">${e}</div>`
+  ).join('');
+
+  function selectIcon(icon, el) {
+    selectedIcon = icon;
+    document.querySelectorAll('.emoji-opt').forEach(e => e.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+  window.selectIcon = selectIcon;
+
+  function openNewColl() {
+    document.getElementById('cName').value = '';
+    selectedIcon = ICONS[0];
+    document.querySelectorAll('.emoji-opt').forEach((e,i) => e.classList.toggle('selected', i===0));
+    document.getElementById('newCollModal').classList.add('open');
+    document.getElementById('cName').focus();
+  }
+  function closeNewColl() { document.getElementById('newCollModal').classList.remove('open'); }
+  function saveNewColl() {
+    const name = document.getElementById('cName').value.trim();
+    if (!name) { showToast('Name is required', '⚠'); return; }
+    const colls = getCollections();
+    colls.unshift({ id: 'coll_' + Date.now(), name, icon: selectedIcon, snippetIds: [], createdAt: Date.now() });
+    saveCollections(colls);
+    closeNewColl();
+    renderCollections();
+    document.getElementById('sidebar').innerHTML = buildSidebar('collections');
+    showToast('Collection created');
+  }
+  window.closeNewColl = closeNewColl;
+  window.saveNewColl  = saveNewColl;
+
+  document.getElementById('newCollBtn').addEventListener('click', openNewColl);
+  document.getElementById('newCollModal').addEventListener('click', e => {
+    if (e.target === e.currentTarget) closeNewColl();
+  });
+
+  renderCollections();
+  renderByLang();
+  renderByCat();
+</script>
+</body>
+</html>

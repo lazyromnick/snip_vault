@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SnipVault — Settings</title>
+  <link rel="stylesheet" href="../css/style.css" />
+  <style>
+    .settings-wrap { padding: 28px 32px; max-width: 640px; }
+    .settings-section {
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+    .settings-section-head {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .settings-row {
+      padding: 14px 18px;
+      display: flex; align-items: center; justify-content: space-between; gap: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .settings-row:last-child { border-bottom: none; }
+    .row-info .row-label { font-size: 13px; font-weight: 500; }
+    .row-info .row-desc  { font-size: 12px; color: var(--text-3); margin-top: 2px; }
+
+    .toggle {
+      position: relative; width: 40px; height: 22px; flex-shrink: 0;
+    }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle-track {
+      position: absolute; inset: 0;
+      background: var(--bg-3);
+      border: 1px solid var(--border-2);
+      border-radius: 20px;
+      cursor: pointer; transition: background .2s;
+    }
+    .toggle-track::after {
+      content: ''; position: absolute;
+      left: 3px; top: 3px;
+      width: 14px; height: 14px;
+      background: var(--text-3);
+      border-radius: 50%;
+      transition: transform .2s, background .2s;
+    }
+    .toggle input:checked + .toggle-track { background: var(--accent); border-color: var(--accent); }
+    .toggle input:checked + .toggle-track::after { transform: translateX(18px); background: #fff; }
+
+    select.inline-select {
+      background: var(--bg-3); border: 1px solid var(--border);
+      border-radius: var(--radius); color: var(--text);
+      font-size: 12px; padding: 5px 8px; outline: none;
+      font-family: var(--sans);
+    }
+
+    .btn { padding: 8px 16px; border-radius: var(--radius); font-size: 13px; font-weight: 600; cursor: pointer; border: none; display: flex; align-items: center; gap: 7px; }
+    .btn-ghost { background: var(--bg-3); color: var(--text-2); border: 1px solid var(--border); }
+    .btn-ghost:hover { background: var(--bg-2); color: var(--text); }
+    .btn-danger { background: #3b1111; color: #f87171; border: 1px solid #5b1a1a; }
+    .btn-danger:hover { background: #4d1515; }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { opacity: .88; }
+
+    .stat-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 1px; background: var(--border);
+    }
+    .stat-item {
+      background: var(--bg-2); padding: 16px 18px;
+    }
+    .stat-num  { font-size: 24px; font-weight: 700; color: var(--text); }
+    .stat-name { font-size: 12px; color: var(--text-3); margin-top: 2px; }
+
+    .danger-zone { border-color: #5b1a1a !important; }
+    .danger-zone .settings-section-head { color: #f87171; border-color: #5b1a1a; }
+  </style>
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="main-content">
+    <div class="topbar">
+      <span class="page-title">Settings</span>
+    </div>
+
+    <div class="settings-wrap">
+
+      <!-- Stats -->
+      <div class="settings-section" style="margin-bottom:20px">
+        <div class="settings-section-head">📊 Library Stats</div>
+        <div class="stat-grid" id="statGrid"></div>
+      </div>
+
+      <!-- General -->
+      <div class="settings-section">
+        <div class="settings-section-head">⚙️ General</div>
+        <div class="settings-row">
+          <div class="row-info">
+            <div class="row-label">Default language</div>
+            <div class="row-desc">Pre-selected when creating a new snippet</div>
+          </div>
+          <select class="inline-select" id="defLang"></select>
+        </div>
+        <div class="settings-row">
+          <div class="row-info">
+            <div class="row-label">Default category</div>
+            <div class="row-desc">Pre-selected category for new snippets</div>
+          </div>
+          <select class="inline-select" id="defCat"></select>
+        </div>
+        <div class="settings-row">
+          <div class="row-info">
+            <div class="row-label">Show line numbers</div>
+            <div class="row-desc">Display line numbers in the snippet viewer</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="showLines" checked />
+            <div class="toggle-track"></div>
+          </label>
+        </div>
+        <div class="settings-row">
+          <div class="row-info">
+            <div class="row-label">Compact card view</div>
+            <div class="row-desc">Smaller cards with less padding</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="compactView" />
+            <div class="toggle-track"></div>
+          </label>
+        </div>
+      </div>
+
+      <!-- Data -->
+      <div class="settings-section">
+        <div class="settings-section-head">💾 Data</div>
+        <div class="settings-row">
+          <div class="row-info">
+            <div class="row-label">Export snippets</div>
+            <div class="row-desc">Download all your snippets as a JSON file</div>
+          </div>
+          <button class="btn btn-ghost" onclick="exportData()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Export JSON
+          </button>
+        </div>
+        <div class="settings-row">
+          <div class="row-info">
+            <div class="row-label">Import snippets</div>
+            <div class="row-desc">Load snippets from a previously exported JSON file</div>
+          </div>
+          <label class="btn btn-ghost" style="cursor:pointer">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            Import JSON
+            <input type="file" accept=".json" id="importFile" style="display:none" onchange="importData(event)" />
+          </label>
+        </div>
+        <div class="settings-row">
+          <div class="row-info">
+            <div class="row-label">Storage used</div>
+            <div class="row-desc">Approximate localStorage usage</div>
+          </div>
+          <span style="font-size:13px;color:var(--text-2)" id="storageSize">—</span>
+        </div>
+      </div>
+
+      <!-- Danger zone -->
+      <div class="settings-section danger-zone">
+        <div class="settings-section-head">⚠️ Danger Zone</div>
+        <div class="settings-row">
+          <div class="row-info">
+            <div class="row-label">Reset seed data</div>
+            <div class="row-desc">Restore the default example snippets (does not remove yours)</div>
+          </div>
+          <button class="btn btn-ghost" onclick="resetSeed()">Restore examples</button>
+        </div>
+        <div class="settings-row">
+          <div class="row-info">
+            <div class="row-label">Clear all snippets</div>
+            <div class="row-desc">Permanently delete every snippet in your library</div>
+          </div>
+          <button class="btn btn-danger" onclick="clearAll()">Clear library</button>
+        </div>
+      </div>
+
+      <!-- About -->
+      <div class="settings-section">
+        <div class="settings-section-head">ℹ️ About</div>
+        <div class="settings-row">
+          <div class="row-info">
+            <div class="row-label">SnipVault</div>
+            <div class="row-desc">A personal code snippet library. Data stored in browser localStorage.</div>
+          </div>
+          <span style="font-size:12px;color:var(--text-3)">v0.1.0</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+<div id="toast"></div>
+<script src="../js/data.js"></script>
+<script src="../js/ui.js"></script>
+<script>
+  SV.initStore();
+  document.getElementById('sidebar').innerHTML = buildSidebar('settings');
+
+  /* ── Populate selects ─────────────────────────────────────────── */
+  document.getElementById('defLang').innerHTML = buildLangOptions('python');
+  document.getElementById('defCat').innerHTML  = buildCatOptions('snippet');
+
+  /* ── Load settings ─────────────────────────────────────────────── */
+  const settings = SV.getSettings();
+  if (settings.defLang) document.getElementById('defLang').value = settings.defLang;
+  if (settings.defCat)  document.getElementById('defCat').value  = settings.defCat;
+  document.getElementById('showLines').checked   = settings.showLines   !== false;
+  document.getElementById('compactView').checked = settings.compactView === true;
+
+  /* ── Stats ─────────────────────────────────────────────────────── */
+  function renderStats() {
+    const snippets = SV.getSnippets();
+    const langs = new Set(snippets.map(s => s.language)).size;
+    const favs  = snippets.filter(s => s.favorited).length;
+    document.getElementById('statGrid').innerHTML = `
+      <div class="stat-item"><div class="stat-num">${snippets.length}</div><div class="stat-name">Snippets</div></div>
+      <div class="stat-item"><div class="stat-num">${langs}</div><div class="stat-name">Languages</div></div>
+      <div class="stat-item"><div class="stat-num">${favs}</div><div class="stat-name">Favorites</div></div>
+    `;
+    // storage
+    const bytes = new Blob([localStorage.getItem('snipvault_snippets')||'']).size;
+    document.getElementById('storageSize').textContent =
+      bytes < 1024 ? `${bytes} B` : `${(bytes/1024).toFixed(1)} KB`;
+  }
+
+  /* ── Save settings on change ─────────────────────────────────── */
+  ['defLang','defCat','showLines','compactView'].forEach(id => {
+    document.getElementById(id).addEventListener('change', saveSettings);
+  });
+  function saveSettings() {
+    SV.saveSettings({
+      defLang:     document.getElementById('defLang').value,
+      defCat:      document.getElementById('defCat').value,
+      showLines:   document.getElementById('showLines').checked,
+      compactView: document.getElementById('compactView').checked,
+    });
+    showToast('Settings saved');
+  }
+
+  /* ── Export ─────────────────────────────────────────────────────── */
+  function exportData() {
+    const data = JSON.stringify(SV.getSnippets(), null, 2);
+    const blob = new Blob([data], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `snipvault-export-${new Date().toISOString().slice(0,10)}.json`;
+    a.click();
+    showToast('Export downloaded');
+  }
+
+  /* ── Import ─────────────────────────────────────────────────────── */
+  function importData(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      try {
+        const imported = JSON.parse(ev.target.result);
+        if (!Array.isArray(imported)) throw new Error();
+        const existing = SV.getSnippets();
+        const existingIds = new Set(existing.map(s => s.id));
+        let added = 0;
+        imported.forEach(s => {
+          if (s.id && s.title && s.code) {
+            if (!existingIds.has(s.id)) { existing.push(s); added++; }
+          }
+        });
+        localStorage.setItem('snipvault_snippets', JSON.stringify(existing));
+        renderStats();
+        document.getElementById('sidebar').innerHTML = buildSidebar('settings');
+        showToast(`Imported ${added} new snippet${added !== 1 ? 's' : ''}`);
+      } catch {
+        showToast('Invalid JSON file', '⚠');
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+  }
+
+  /* ── Clear all ─────────────────────────────────────────────────── */
+  function clearAll() {
+    if (!confirm('Delete ALL snippets? This cannot be undone.')) return;
+    localStorage.removeItem('snipvault_snippets');
+    renderStats();
+    document.getElementById('sidebar').innerHTML = buildSidebar('settings');
+    showToast('Library cleared');
+  }
+
+  /* ── Reset seed ─────────────────────────────────────────────────── */
+  function resetSeed() {
+    const existing = SV.getSnippets();
+    const existingIds = new Set(existing.map(s => s.id));
+    let added = 0;
+    SV.LANGUAGES; // touch
+    const all = SV.initStore ? null : null; // just re-trigger
+    // We re-use seed IDs from data.js — grab them via the exposed SEED approach
+    // Since SEED_SNIPPETS isn't exported, we reload data.js logic inline
+    const seedIds = ['seed1','seed2','seed3','seed4','seed5','seed6','seed7','seed8'];
+    seedIds.forEach(id => {
+      if (!existingIds.has(id)) {
+        // Not present — user cleared them, reload page triggers initStore seed
+      }
+    });
+    // Simplest approach: clear & re-init if all seeds are missing
+    const presentSeeds = seedIds.filter(id => existingIds.has(id)).length;
+    if (presentSeeds === 0) {
+      localStorage.removeItem('snipvault_snippets');
+      SV.initStore();
+      renderStats();
+      document.getElementById('sidebar').innerHTML = buildSidebar('settings');
+      showToast('Example snippets restored');
+    } else {
+      showToast('Example snippets are already present', 'ℹ');
+    }
+  }
+
+  window.exportData  = exportData;
+  window.importData  = importData;
+  window.clearAll    = clearAll;
+  window.resetSeed   = resetSeed;
+
+  renderStats();
+</script>
+</body>
+</html>
