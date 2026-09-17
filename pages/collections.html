@@ -5,6 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SnipVault — Collections</title>
   <link rel="stylesheet" href="../css/style.css" />
+  <link rel="manifest" href="../manifest.json" />
+  <link rel="icon" href="../icons/icon-192.png" />
+  <meta name="theme-color" content="#2e9de4" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="apple-touch-icon" href="../icons/icon-192.png" />
   <style>
     .collections-wrap { padding: 20px 24px; }
 
@@ -166,7 +172,6 @@
 <script src="../js/data.js"></script>
 <script src="../js/ui.js"></script>
 <script>
-  var COLL_KEY = 'snipvault_collections';
   var ICONS    = ['📦','🚀','🔥','💡','📚','🎯','🛠','⚡','🌟','🧪','🔐','🎨','📊','🌐','🗄'];
   var selectedIcon = ICONS[0];
 
@@ -174,10 +179,8 @@
   window._activePage = 'collections';
   initSidebar('collections');
 
-  function getCollections() {
-    try { return JSON.parse(localStorage.getItem(COLL_KEY)) || []; } catch { return []; }
-  }
-  function saveCollections(c) { localStorage.setItem(COLL_KEY, JSON.stringify(c)); }
+  var getCollections  = SV.getCollections;
+  var saveCollections = SV.saveCollections;
 
   /* ── Custom collections ─────────────────────────────────────── */
   function renderCollections() {
@@ -297,5 +300,6 @@
   renderLangs();
   renderCats();
 </script>
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("../service-worker.js",{scope:"/"}).catch(function(){});}</script>
 </body>
 </html>

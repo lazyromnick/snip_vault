@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%"   stop-color="#1a2a3a"/>
+      <stop offset="100%" stop-color="#0d1a2a"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%"   stop-color="#3db3ff"/>
+      <stop offset="100%" stop-color="#1a85c8"/>
+    </linearGradient>
+    <linearGradient id="doc" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%"   stop-color="#1e2f42"/>
+      <stop offset="100%" stop-color="#162436"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background rounded rect -->
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+
+  <!-- Subtle grid dots background -->
+  <circle cx="96"  cy="96"  r="3" fill="#2e9de4" opacity="0.15"/>
+  <circle cx="192" cy="96"  r="3" fill="#2e9de4" opacity="0.15"/>
+  <circle cx="288" cy="96"  r="3" fill="#2e9de4" opacity="0.15"/>
+  <circle cx="384" cy="96"  r="3" fill="#2e9de4" opacity="0.15"/>
+  <circle cx="416" cy="96"  r="3" fill="#2e9de4" opacity="0.15"/>
+  <circle cx="96"  cy="416" r="3" fill="#2e9de4" opacity="0.15"/>
+  <circle cx="416" cy="416" r="3" fill="#2e9de4" opacity="0.15"/>
+
+  <!-- Document / card shape -->
+  <rect x="96" y="110" width="260" height="310" rx="22" fill="url(#doc)" stroke="#2e9de4" stroke-width="3" opacity="0.9"/>
+
+  <!-- Folded corner -->
+  <polygon points="296,110 356,110 356,170" fill="#0d1a2a" opacity="0.6"/>
+  <polyline points="296,110 296,170 356,170" fill="none" stroke="#2e9de4" stroke-width="3" stroke-linejoin="round" opacity="0.7"/>
+
+  <!-- Code lines -->
+  <!-- Line 1: keyword + name -->
+  <rect x="124" y="204" width="44" height="12" rx="4" fill="#c792ea" opacity="0.9"/>
+  <rect x="176" y="204" width="80" height="12" rx="4" fill="#82aaff" opacity="0.9"/>
+  <rect x="264" y="204" width="16" height="12" rx="4" fill="#89ddff" opacity="0.75"/>
+
+  <!-- Line 2: indented string -->
+  <rect x="140" y="228" width="20" height="12" rx="4" fill="#2e9de4" opacity="0.6"/>
+  <rect x="168" y="228" width="56" height="12" rx="4" fill="#c3e88d" opacity="0.9"/>
+  <rect x="232" y="228" width="10" height="12" rx="4" fill="#89ddff" opacity="0.7"/>
+  <rect x="250" y="228" width="68" height="12" rx="4" fill="#c3e88d" opacity="0.9"/>
+
+  <!-- Line 3: indented logic -->
+  <rect x="140" y="252" width="32" height="12" rx="4" fill="#c792ea" opacity="0.85"/>
+  <rect x="180" y="252" width="48" height="12" rx="4" fill="#e4e7f0" opacity="0.55"/>
+  <rect x="236" y="252" width="20" height="12" rx="4" fill="#f78c6c" opacity="0.9"/>
+
+  <!-- Line 4: short line -->
+  <rect x="140" y="276" width="60" height="12" rx="4" fill="#82aaff" opacity="0.75"/>
+  <rect x="208" y="276" width="30" height="12" rx="4" fill="#e4e7f0" opacity="0.4"/>
+
+  <!-- Line 5: comment -->
+  <rect x="124" y="300" width="140" height="12" rx="4" fill="#546e7a" opacity="0.7"/>
+
+  <!-- Line 6: closing bracket -->
+  <rect x="124" y="324" width="16" height="12" rx="4" fill="#89ddff" opacity="0.75"/>
+
+  <!-- Accent blue bracket decoration — left -->
+  <text x="340" y="310" font-family="monospace" font-weight="900" font-size="110" fill="url(#accent)" opacity="0.92" text-anchor="middle">}</text>
+
+  <!-- Bottom tag strip on card -->
+  <rect x="124" y="372" width="46" height="18" rx="9" fill="#0d2035" stroke="#2e9de4" stroke-width="1.5"/>
+  <rect x="178" y="372" width="60" height="18" rx="9" fill="#1a1228" stroke="#c792ea" stroke-width="1.5" opacity="0.8"/>
+  <rect x="246" y="372" width="40" height="18" rx="9" fill="#0a2218" stroke="#c3e88d" stroke-width="1.5" opacity="0.8"/>
+</svg>

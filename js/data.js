@@ -227,3 +227,42 @@ window.SV = {
   getSettings, saveSettings,
   getLang, getCat, timeAgo, escapeHtml,
 };
+
+/* ── Collections API (shared) ───────────────────────────────── */
+var COLL_KEY = 'snipvault_collections';
+
+function getCollections() {
+  try { return JSON.parse(localStorage.getItem(COLL_KEY)) || []; } catch(e) { return []; }
+}
+function saveCollections(c) { localStorage.setItem(COLL_KEY, JSON.stringify(c)); }
+
+function addSnippetToCollection(collId, snippetId) {
+  var colls = getCollections();
+  var coll  = colls.find(function(c){ return c.id === collId; });
+  if (!coll) return false;
+  if (!coll.snippetIds) coll.snippetIds = [];
+  if (coll.snippetIds.indexOf(snippetId) === -1) coll.snippetIds.push(snippetId);
+  saveCollections(colls);
+  return true;
+}
+
+function removeSnippetFromCollection(collId, snippetId) {
+  var colls = getCollections();
+  var coll  = colls.find(function(c){ return c.id === collId; });
+  if (!coll) return false;
+  coll.snippetIds = (coll.snippetIds || []).filter(function(id){ return id !== snippetId; });
+  saveCollections(colls);
+  return true;
+}
+
+function getSnippetCollections(snippetId) {
+  return getCollections().filter(function(c){
+    return (c.snippetIds || []).indexOf(snippetId) !== -1;
+  });
+}
+
+window.SV.getCollections            = getCollections;
+window.SV.saveCollections           = saveCollections;
+window.SV.addSnippetToCollection    = addSnippetToCollection;
+window.SV.removeSnippetFromCollection = removeSnippetFromCollection;
+window.SV.getSnippetCollections     = getSnippetCollections;

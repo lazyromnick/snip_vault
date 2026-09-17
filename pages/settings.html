@@ -5,6 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SnipVault — Settings</title>
   <link rel="stylesheet" href="../css/style.css" />
+  <link rel="manifest" href="../manifest.json" />
+  <link rel="icon" href="../icons/icon-192.png" />
+  <meta name="theme-color" content="#2e9de4" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="apple-touch-icon" href="../icons/icon-192.png" />
   <style>
     .settings-wrap { padding: 20px 24px; max-width: 620px; width: 100%; }
 
@@ -369,5 +375,6 @@
 
   renderStats();
 </script>
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("../service-worker.js",{scope:"/"}).catch(function(){});}</script>
 </body>
 </html>
