@@ -1,178 +1,255 @@
 /* ── SnipVault · UI Utilities ───────────────────────────────── */
 
+/* ── Theme ───────────────────────────────────────────────────── */
+function applyTheme() {
+  const s = SV.getSettings();
+  document.body.classList.toggle('light', s.theme === 'light');
+}
+
 /* ── Toast ───────────────────────────────────────────────────── */
-let toastTimer = null;
-function showToast(msg, icon = '✓') {
+let _toastTimer = null;
+function showToast(msg, icon) {
+  icon = icon || '✓';
   const el = document.getElementById('toast');
   if (!el) return;
-  el.innerHTML = `<span>${icon}</span><span>${msg}</span>`;
+  el.innerHTML = '<span>' + icon + '</span><span>' + msg + '</span>';
   el.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => el.classList.remove('show'), 2200);
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(function() { el.classList.remove('show'); }, 2200);
 }
 
-/* ── Copy to clipboard ───────────────────────────────────────── */
+/* ── Copy ────────────────────────────────────────────────────── */
 function copyCode(code) {
-  navigator.clipboard.writeText(code).then(() => showToast('Copied to clipboard'));
+  navigator.clipboard.writeText(code).then(function() { showToast('Copied to clipboard'); });
 }
 
-/* ── Build sidebar nav ───────────────────────────────────────── */
-function buildSidebar(activePage = 'index') {
-  const snippets = SV.getSnippets();
-  const favCount = snippets.filter(s => s.favorited).length;
+/* ── Mobile sidebar ──────────────────────────────────────────── */
+function openSidebar() {
+  var sb = document.getElementById('sidebar');
+  var ov = document.getElementById('sidebarOverlay');
+  if (sb) sb.classList.add('open');
+  if (ov) ov.classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+function closeSidebar() {
+  var sb = document.getElementById('sidebar');
+  var ov = document.getElementById('sidebarOverlay');
+  if (sb) sb.classList.remove('open');
+  if (ov) ov.classList.remove('show');
+  document.body.style.overflow = '';
+}
 
-  const langCounts = {};
-  snippets.forEach(s => { langCounts[s.language] = (langCounts[s.language] || 0) + 1; });
+/* ── Resolve relative path from any page ────────────────────── */
+function getDepth() {
+  var path = location.pathname;
+  var parts = path.split('/').filter(Boolean);
+  // If we're inside /pages/, depth is ../
+  // Check if current file is inside a pages/ subdirectory
+  if (path.indexOf('/pages/') !== -1) return '../';
+  return '';
+}
 
-  const pages = { index: 'index.html', favorites: 'pages/favorites.html',
-    collections: 'pages/collections.html', settings: 'pages/settings.html' };
+/* ── Build sidebar HTML ──────────────────────────────────────── */
+function buildSidebar(activePage) {
+  activePage = activePage || 'index';
+  var snippets = SV.getSnippets();
+  var favCount = snippets.filter(function(s) { return s.favorited; }).length;
 
-  function href(page) {
-    const depth = activePage === 'index' ? '' : '../';
-    return depth + (page === 'index' ? 'index.html' : pages[page].replace('pages/', depth + 'pages/'));
+  var langCounts = {};
+  snippets.forEach(function(s) {
+    langCounts[s.language] = (langCounts[s.language] || 0) + 1;
+  });
+
+  var d = getDepth();
+
+  function navHref(page) {
+    if (page === 'index')       return d + 'index.html';
+    if (page === 'favorites')   return d + 'pages/favorites.html';
+    if (page === 'collections') return d + 'pages/collections.html';
+    if (page === 'settings')    return d + 'pages/settings.html';
+    return '#';
   }
 
-  const topLangs = SV.LANGUAGES
-    .filter(l => langCounts[l.id])
-    .sort((a, b) => (langCounts[b.id] || 0) - (langCounts[a.id] || 0))
+  var topLangs = SV.LANGUAGES
+    .filter(function(l) { return langCounts[l.id]; })
+    .sort(function(a, b) { return (langCounts[b.id] || 0) - (langCounts[a.id] || 0); })
     .slice(0, 8);
 
-  return `
-  <div class="sidebar-logo">
-    <div class="logo-icon">⟨/⟩</div>
-    <div class="logo-text">Snip<span>Vault</span></div>
-  </div>
+  var catCounts = {};
+  snippets.forEach(function(s) {
+    catCounts[s.category] = (catCounts[s.category] || 0) + 1;
+  });
 
-  <a href="${href('index')}" style="text-decoration:none">
-    <button class="new-snippet-btn" onclick="location.href='${href('index')}?new=1'">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-      New snippet
-    </button>
-  </a>
+  var html = '';
 
-  <nav class="nav-section">
-    <div class="nav-label">Library</div>
-    <a href="${href('index')}" style="text-decoration:none">
-      <button class="nav-item ${activePage === 'index' ? 'active' : ''}">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-        All snippets <span class="count">${snippets.length}</span>
-      </button>
-    </a>
-    <a href="${href('favorites')}" style="text-decoration:none">
-      <button class="nav-item ${activePage === 'favorites' ? 'active' : ''}">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-        Favorites <span class="count">${favCount}</span>
-      </button>
-    </a>
-    <a href="${href('collections')}" style="text-decoration:none">
-      <button class="nav-item ${activePage === 'collections' ? 'active' : ''}">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
-        Collections
-      </button>
-    </a>
-  </nav>
+  html += '<div class="sidebar-logo">';
+  html += '<div class="logo-icon">⟨/⟩</div>';
+  html += '<div class="logo-text">Snip<span>Vault</span></div>';
+  html += '</div>';
 
-  <nav class="nav-section">
-    <div class="nav-label">Languages</div>
-    ${topLangs.map(l => `
-      <a href="${href('index')}?lang=${l.id}" style="text-decoration:none">
-        <button class="nav-item">
-          <span class="lang-nav-dot" style="background:${l.color}"></span>
-          ${l.label} <span class="count">${langCounts[l.id] || 0}</span>
-        </button>
-      </a>`).join('')}
-  </nav>
+  html += '<button class="new-snippet-btn" onclick="handleNewSnippet()">';
+  html += '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>';
+  html += 'New snippet</button>';
 
-  <nav class="nav-section">
-    <div class="nav-label">Categories</div>
-    ${SV.CATEGORIES.slice(0, 6).map(c => {
-      const cnt = snippets.filter(s => s.category === c.id).length;
-      if (!cnt) return '';
-      return `
-        <a href="${href('index')}?cat=${c.id}" style="text-decoration:none">
-          <button class="nav-item">
-            <span style="font-size:13px">${c.icon}</span>
-            ${c.label} <span class="count">${cnt}</span>
-          </button>
-        </a>`;
-    }).join('')}
-  </nav>
+  // Library nav
+  html += '<nav class="nav-section"><div class="nav-label">Library</div>';
+  html += '<a href="' + navHref('index') + '"><button class="nav-item ' + (activePage === 'index' ? 'active' : '') + '">';
+  html += '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>';
+  html += 'All snippets<span class="count">' + snippets.length + '</span></button></a>';
 
-  <div class="sidebar-footer">
-    <a href="${href('settings')}" style="text-decoration:none">
-      <button class="nav-item ${activePage === 'settings' ? 'active' : ''}">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-        Settings
-      </button>
-    </a>
-  </div>`;
+  html += '<a href="' + navHref('favorites') + '"><button class="nav-item ' + (activePage === 'favorites' ? 'active' : '') + '">';
+  html += '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>';
+  html += 'Favorites<span class="count">' + favCount + '</span></button></a>';
+
+  html += '<a href="' + navHref('collections') + '"><button class="nav-item ' + (activePage === 'collections' ? 'active' : '') + '">';
+  html += '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>';
+  html += 'Collections</button></a>';
+  html += '</nav>';
+
+  // Languages
+  if (topLangs.length) {
+    html += '<nav class="nav-section"><div class="nav-label">Languages</div>';
+    topLangs.forEach(function(l) {
+      html += '<a href="' + navHref('index') + '?lang=' + l.id + '"><button class="nav-item">';
+      html += '<span class="lang-nav-dot" style="background:' + l.color + '"></span>';
+      html += l.label + '<span class="count">' + (langCounts[l.id] || 0) + '</span>';
+      html += '</button></a>';
+    });
+    html += '</nav>';
+  }
+
+  // Categories
+  var catItems = SV.CATEGORIES.filter(function(c) { return catCounts[c.id]; }).slice(0, 6);
+  if (catItems.length) {
+    html += '<nav class="nav-section"><div class="nav-label">Categories</div>';
+    catItems.forEach(function(c) {
+      html += '<a href="' + navHref('index') + '?cat=' + c.id + '"><button class="nav-item">';
+      html += '<span style="font-size:13px">' + c.icon + '</span>';
+      html += c.label + '<span class="count">' + catCounts[c.id] + '</span>';
+      html += '</button></a>';
+    });
+    html += '</nav>';
+  }
+
+  // Footer
+  html += '<div class="sidebar-footer">';
+  html += '<a href="' + navHref('settings') + '"><button class="nav-item ' + (activePage === 'settings' ? 'active' : '') + '">';
+  html += '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>';
+  html += 'Settings</button></a>';
+  html += '</div>';
+
+  return html;
+}
+
+/* ── Insert sidebar + overlay into page ─────────────────────── */
+function initSidebar(activePage) {
+  var sb = document.getElementById('sidebar');
+  if (sb) sb.innerHTML = buildSidebar(activePage);
+
+  // overlay click closes sidebar
+  var ov = document.getElementById('sidebarOverlay');
+  if (ov) ov.addEventListener('click', closeSidebar);
+
+  // menu toggle
+  var mt = document.getElementById('menuToggle');
+  if (mt) mt.addEventListener('click', openSidebar);
+
+  applyTheme();
+}
+
+/* ── handleNewSnippet — works from any page ─────────────────── */
+function handleNewSnippet() {
+  closeSidebar();
+  var d = getDepth();
+  var indexUrl = d + 'index.html?new=1';
+  // If already on index, open the modal directly
+  if (typeof openModal === 'function') {
+    openModal();
+  } else {
+    location.href = indexUrl;
+  }
 }
 
 /* ── Build a snippet card ─────────────────────────────────────── */
-function buildCard(snippet, depth = '') {
-  const lang = SV.getLang(snippet.language);
-  const cat  = SV.getCat(snippet.category);
-  const preview = snippet.code.split('\n').slice(0, 5).join('\n');
+function buildCard(snippet) {
+  var d = getDepth();
+  var lang = SV.getLang(snippet.language);
+  var cat  = SV.getCat(snippet.category);
+  var preview = snippet.code.split('\n').slice(0, 5).join('\n');
 
-  return `
-  <div class="snippet-card ${snippet.favorited ? 'favorited' : ''}"
-       onclick="location.href='${depth}pages/view.html?id=${snippet.id}'">
-    <div class="card-header">
-      <div class="card-lang-icon" style="background:${lang.bg};color:${lang.color}">${lang.abbr}</div>
-      <div class="card-info">
-        <div class="card-title">${SV.escapeHtml(snippet.title)}</div>
-        <div class="card-desc">${SV.escapeHtml(snippet.description || '')}</div>
-      </div>
-      ${snippet.favorited ? '<span class="card-fav-indicator">★</span>' : ''}
-    </div>
-    <div class="code-block">${SV.escapeHtml(preview)}</div>
-    <div class="card-footer">
-      <div class="card-tags">
-        <span class="tag-pill" style="background:${lang.bg};color:${lang.color};border-color:${lang.color}22">${lang.label}</span>
-        <span class="tag-pill">${cat.icon} ${cat.label}</span>
-        ${(snippet.tags || []).slice(0, 1).map(t => `<span class="tag-pill">${SV.escapeHtml(t)}</span>`).join('')}
-      </div>
-      <div class="card-actions" onclick="event.stopPropagation()">
-        <button class="card-btn" title="Copy code" onclick="copyCode(${JSON.stringify(snippet.code).replace(/'/g,"&#39;")});showToast('Copied!')">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-        </button>
-        <button class="card-btn ${snippet.favorited ? 'fav-active' : ''}" title="Favorite"
-          onclick="handleFav('${snippet.id}', this)">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="${snippet.favorited ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-        </button>
-      </div>
-    </div>
-  </div>`;
+  var html = '<div class="snippet-card ' + (snippet.favorited ? 'favorited' : '') + '"';
+  html += ' onclick="location.href=\'' + d + 'pages/view.html?id=' + snippet.id + '\'">';
+
+  html += '<div class="card-header">';
+  html += '<div class="card-lang-icon" style="background:' + lang.bg + ';color:' + lang.color + '">' + lang.abbr + '</div>';
+  html += '<div class="card-info">';
+  html += '<div class="card-title">' + SV.escapeHtml(snippet.title) + '</div>';
+  html += '<div class="card-desc">' + SV.escapeHtml(snippet.description || '') + '</div>';
+  html += '</div>';
+  if (snippet.favorited) html += '<span class="card-fav-indicator">★</span>';
+  html += '</div>';
+
+  html += '<div class="code-block">' + SV.escapeHtml(preview) + '</div>';
+
+  html += '<div class="card-footer">';
+  html += '<div class="card-tags">';
+  html += '<span class="tag-pill" style="background:' + lang.bg + ';color:' + lang.color + ';border-color:' + lang.color + '33">' + lang.label + '</span>';
+  html += '<span class="tag-pill">' + cat.icon + ' ' + cat.label + '</span>';
+  var tags = snippet.tags || [];
+  if (tags[0]) html += '<span class="tag-pill">' + SV.escapeHtml(tags[0]) + '</span>';
+  html += '</div>';
+
+  html += '<div class="card-actions" onclick="event.stopPropagation()">';
+  // copy btn
+  var escaped = snippet.code.replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/\n/g,'\\n');
+  html += '<button class="card-btn" title="Copy" onclick="copyCode(\'' + escaped + '\')">';
+  html += '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+  html += '</button>';
+  // fav btn
+  html += '<button class="card-btn ' + (snippet.favorited ? 'fav-active' : '') + '" title="Favorite" onclick="handleFav(\'' + snippet.id + '\',this)">';
+  html += '<svg width="12" height="12" viewBox="0 0 24 24" fill="' + (snippet.favorited ? 'currentColor' : 'none') + '" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>';
+  html += '</button>';
+  html += '</div>';
+  html += '</div>';
+  html += '</div>';
+  return html;
 }
 
-/* ── Favorite handler (used in cards) ───────────────────────── */
+/* ── Favorite handler ─────────────────────────────────────────── */
 function handleFav(id, btn) {
-  const isFav = SV.toggleFavorite(id);
+  var isFav = SV.toggleFavorite(id);
   btn.classList.toggle('fav-active', isFav);
-  const svg = btn.querySelector('svg');
+  var svg = btn.querySelector('svg');
   svg.setAttribute('fill', isFav ? 'currentColor' : 'none');
   btn.closest('.snippet-card').classList.toggle('favorited', isFav);
   showToast(isFav ? 'Added to favorites' : 'Removed from favorites', isFav ? '★' : '☆');
+  // refresh sidebar counts
+  initSidebar(window._activePage || 'index');
 }
 
-/* ── Language select builder ─────────────────────────────────── */
-function buildLangOptions(selected = '') {
-  return SV.LANGUAGES.map(l =>
-    `<option value="${l.id}" ${l.id === selected ? 'selected' : ''}>${l.label}</option>`
-  ).join('');
+/* ── Select builders ─────────────────────────────────────────── */
+function buildLangOptions(selected) {
+  selected = selected || '';
+  return SV.LANGUAGES.map(function(l) {
+    return '<option value="' + l.id + '"' + (l.id === selected ? ' selected' : '') + '>' + l.label + '</option>';
+  }).join('');
 }
-
-/* ── Category select builder ─────────────────────────────────── */
-function buildCatOptions(selected = '') {
-  return SV.CATEGORIES.map(c =>
-    `<option value="${c.id}" ${c.id === selected ? 'selected' : ''}>${c.icon} ${c.label}</option>`
-  ).join('');
+function buildCatOptions(selected) {
+  selected = selected || '';
+  return SV.CATEGORIES.map(function(c) {
+    return '<option value="' + c.id + '"' + (c.id === selected ? ' selected' : '') + '>' + c.icon + ' ' + c.label + '</option>';
+  }).join('');
 }
 
 window.showToast = showToast;
 window.copyCode  = copyCode;
-window.buildSidebar = buildSidebar;
-window.buildCard    = buildCard;
-window.handleFav    = handleFav;
-window.buildLangOptions = buildLangOptions;
-window.buildCatOptions  = buildCatOptions;
+window.openSidebar   = openSidebar;
+window.closeSidebar  = closeSidebar;
+window.initSidebar   = initSidebar;
+window.buildSidebar  = buildSidebar;
+window.buildCard     = buildCard;
+window.handleFav     = handleFav;
+window.handleNewSnippet  = handleNewSnippet;
+window.buildLangOptions  = buildLangOptions;
+window.buildCatOptions   = buildCatOptions;
+window.applyTheme        = applyTheme;

@@ -7,70 +7,85 @@
   <link rel="stylesheet" href="../css/style.css" />
 </head>
 <body>
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
 <div class="app-shell">
   <aside class="sidebar" id="sidebar"></aside>
+
   <div class="main-content">
     <div class="topbar">
+      <button class="menu-toggle" id="menuToggle" title="Menu">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
       <span class="page-title">⭐ Favorites</span>
       <div class="search-wrap">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         <input type="text" id="searchInput" placeholder="Search favorites…" />
       </div>
     </div>
+
     <div class="filter-bar" id="filterBar"></div>
     <div class="card-grid" id="cardGrid"></div>
   </div>
 </div>
+
 <div id="toast"></div>
+
 <script src="../js/data.js"></script>
 <script src="../js/ui.js"></script>
 <script>
   SV.initStore();
-  document.getElementById('sidebar').innerHTML = buildSidebar('favorites');
+  window._activePage = 'favorites';
+  initSidebar('favorites');
 
-  let searchQ = '';
-  let filterLang = '';
+  var searchQ    = '';
+  var filterLang = '';
 
   function buildFilterBar() {
-    const favs = SV.getSnippets().filter(s => s.favorited);
-    const usedLangs = [...new Set(favs.map(s => s.language))];
-    let html = `<button class="filter-chip ${!filterLang ? 'active' : ''}" onclick="setLang('')">All</button>`;
-    usedLangs.forEach(id => {
-      const l = SV.getLang(id);
-      html += `<button class="filter-chip ${filterLang === id ? 'active' : ''}" onclick="setLang('${id}')">
-        <span class="chip-dot" style="background:${l.color}"></span>${l.label}
-      </button>`;
+    var favs      = SV.getSnippets().filter(function(s){ return s.favorited; });
+    var seen      = {};
+    var usedLangs = [];
+    favs.forEach(function(s) {
+      if (!seen[s.language]) { seen[s.language] = 1; usedLangs.push(s.language); }
+    });
+
+    var html = '<button class="filter-chip ' + (!filterLang ? 'active' : '') + '" onclick="setLang(\'\')">All</button>';
+    usedLangs.forEach(function(id) {
+      var l = SV.getLang(id);
+      html += '<button class="filter-chip ' + (filterLang === id ? 'active' : '') + '" onclick="setLang(\'' + id + '\')">';
+      html += '<span class="chip-dot" style="background:' + l.color + '"></span>' + l.label + '</button>';
     });
     document.getElementById('filterBar').innerHTML = html;
   }
 
   function setLang(l) { filterLang = l; renderGrid(); buildFilterBar(); }
+  window.setLang = setLang;
 
   function renderGrid() {
-    let snippets = SV.getSnippets().filter(s => s.favorited);
-    if (filterLang) snippets = snippets.filter(s => s.language === filterLang);
+    var snippets = SV.getSnippets().filter(function(s){ return s.favorited; });
+    if (filterLang) snippets = snippets.filter(function(s){ return s.language === filterLang; });
     if (searchQ) {
-      const q = searchQ.toLowerCase();
-      snippets = snippets.filter(s =>
-        s.title.toLowerCase().includes(q) ||
-        (s.description||'').toLowerCase().includes(q) ||
-        (s.tags||[]).some(t => t.toLowerCase().includes(q))
-      );
+      var q = searchQ.toLowerCase();
+      snippets = snippets.filter(function(s){
+        return s.title.toLowerCase().includes(q) ||
+          (s.description||'').toLowerCase().includes(q) ||
+          (s.tags||[]).some(function(t){ return t.toLowerCase().includes(q); });
+      });
     }
-    const grid = document.getElementById('cardGrid');
+
+    var grid = document.getElementById('cardGrid');
     if (!snippets.length) {
-      grid.innerHTML = `<div class="empty-state">
-        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-        <strong>No favorites yet</strong>
-        <p>Star snippets from the library to see them here.</p>
-        <button class="empty-btn" onclick="location.href='../index.html'">Browse library</button>
-      </div>`;
+      grid.innerHTML = '<div class="empty-state">' +
+        '<svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>' +
+        '<strong>No favorites yet</strong>' +
+        '<p>Star any snippet from the library to see it here.</p>' +
+        '<button class="empty-btn" onclick="location.href=\'../index.html\'">Browse library</button></div>';
       return;
     }
-    grid.innerHTML = snippets.map(s => buildCard(s, '../')).join('');
+    grid.innerHTML = snippets.map(function(s){ return buildCard(s); }).join('');
   }
 
-  document.getElementById('searchInput').addEventListener('input', e => {
+  document.getElementById('searchInput').addEventListener('input', function(e){
     searchQ = e.target.value.trim(); renderGrid();
   });
 

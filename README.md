@@ -25,4 +25,3 @@ Syntax Basics · Data Structures · Algorithms · OOP · Input/Output · Strings
 - **Pure HTML + CSS + JavaScript** — zero dependencies, no build step
 - **localStorage** for persistence (upgradeable to backend later)
 - No frameworks, no npm
-
