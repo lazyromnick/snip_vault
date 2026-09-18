@@ -1,121 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SnipVault — Collections</title>
   <link rel="stylesheet" href="../css/style.css" />
-  <link rel="manifest" href="../manifest.json" />
-  <link rel="icon" href="../icons/icon-192.png" />
+  <link rel="manifest" href="../manifest.json" /><link rel="icon" href="../icons/icon-192.png" />
   <meta name="theme-color" content="#2e9de4" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <link rel="apple-touch-icon" href="../icons/icon-192.png" />
   <style>
-    .collections-wrap { padding: 20px 24px; }
-
-    .section-title {
-      font-size: 13px; font-weight: 700; color: var(--text-2);
-      text-transform: uppercase; letter-spacing: .06em;
-      margin: 24px 0 12px;
-    }
-    .section-title:first-child { margin-top: 0; }
-
-    /* Custom collections */
-    .coll-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-      gap: 12px; margin-bottom: 8px;
-    }
-    .coll-card {
-      background: var(--bg-2); border: 1px solid var(--border);
-      border-radius: var(--radius-lg); padding: 16px;
-      transition: border-color .15s;
-    }
-    .coll-card:hover { border-color: var(--border-2); }
-    .coll-icon  { font-size: 26px; margin-bottom: 8px; }
-    .coll-name  { font-size: 14px; font-weight: 600; margin-bottom: 3px; }
-    .coll-count { font-size: 12px; color: var(--text-3); }
-    .coll-preview { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 10px; }
-    .coll-snip-pill {
-      font-size: 11px; padding: 2px 8px;
-      background: var(--bg-3); border: 1px solid var(--border);
-      border-radius: 20px; color: var(--text-2);
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 130px;
-    }
-    .coll-actions { display: flex; gap: 6px; margin-top: 12px; }
-
-    .empty-coll {
-      grid-column: 1/-1; padding: 28px;
-      text-align: center; color: var(--text-3);
-      background: var(--bg-2); border: 1px dashed var(--border);
-      border-radius: var(--radius-lg);
-    }
-    .empty-coll div { font-size: 26px; margin-bottom: 6px; }
-    .empty-coll p   { font-size: 13px; color: var(--text-2); }
-
-    /* Browse grids */
-    .lang-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-      gap: 10px;
-    }
-    .lang-card {
-      background: var(--bg-2); border: 1px solid var(--border);
-      border-radius: var(--radius-lg); padding: 12px 14px;
-      display: flex; align-items: center; gap: 12px;
-      cursor: pointer; transition: border-color .15s; color: inherit;
-    }
-    .lang-card:hover { border-color: var(--border-2); }
-    .lang-icon-sm {
-      width: 34px; height: 34px; border-radius: 8px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 10px; font-weight: 800; letter-spacing: -.5px; flex-shrink: 0;
-    }
-    .lang-name { font-size: 13px; font-weight: 600; }
-    .lang-cnt  { font-size: 12px; color: var(--text-3); }
-
-    .cat-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-      gap: 10px;
-    }
-    .cat-card {
-      background: var(--bg-2); border: 1px solid var(--border);
-      border-radius: var(--radius-lg); padding: 12px 14px;
-      display: flex; align-items: center; gap: 10px;
-      cursor: pointer; transition: border-color .15s; color: inherit;
-    }
-    .cat-card:hover { border-color: var(--border-2); }
-    .cat-icon { font-size: 20px; }
-    .cat-name { font-size: 13px; font-weight: 600; }
-    .cat-cnt  { font-size: 12px; color: var(--text-3); }
-
-    /* Create modal */
-    .emoji-row  { display: flex; gap: 7px; flex-wrap: wrap; }
-    .emoji-opt  {
-      width: 34px; height: 34px; border-radius: 8px;
-      background: var(--bg-3); border: 2px solid transparent;
-      font-size: 17px; cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      transition: border-color .12s;
-    }
-    .emoji-opt.selected { border-color: var(--accent); }
-
-    @media (max-width: 600px) {
-      .collections-wrap { padding: 14px; }
-      .coll-grid { grid-template-columns: 1fr; }
-      .lang-grid { grid-template-columns: repeat(2, 1fr); }
-      .cat-grid  { grid-template-columns: repeat(2, 1fr); }
-    }
+    .collections-wrap{padding:20px 24px;}
+    .section-title{font-size:13px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em;margin:24px 0 12px;}
+    .section-title:first-child{margin-top:0;}
+    .coll-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin-bottom:8px;}
+    .coll-card{background:var(--bg-2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;transition:border-color .15s;}
+    .coll-card:hover{border-color:var(--border-2);}
+    .coll-icon{font-size:26px;margin-bottom:8px;} .coll-name{font-size:14px;font-weight:600;margin-bottom:3px;} .coll-count{font-size:12px;color:var(--text-3);}
+    .coll-preview{display:flex;flex-wrap:wrap;gap:4px;margin-top:10px;}
+    .coll-snip-pill{font-size:11px;padding:2px 8px;background:var(--bg-3);border:1px solid var(--border);border-radius:20px;color:var(--text-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:130px;}
+    .coll-actions{display:flex;gap:6px;margin-top:12px;}
+    .empty-coll{grid-column:1/-1;padding:28px;text-align:center;color:var(--text-3);background:var(--bg-2);border:1px dashed var(--border);border-radius:var(--radius-lg);}
+    .empty-coll div{font-size:26px;margin-bottom:6px;} .empty-coll p{font-size:13px;color:var(--text-2);}
+    .lang-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;}
+    .lang-card{background:var(--bg-2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:12px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:border-color .15s;color:inherit;}
+    .lang-card:hover{border-color:var(--border-2);}
+    .lang-icon-sm{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;letter-spacing:-.5px;flex-shrink:0;}
+    .lang-name{font-size:13px;font-weight:600;} .lang-cnt{font-size:12px;color:var(--text-3);}
+    .cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;}
+    .cat-card{background:var(--bg-2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:12px 14px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:border-color .15s;color:inherit;}
+    .cat-card:hover{border-color:var(--border-2);}
+    .cat-icon{font-size:20px;} .cat-name{font-size:13px;font-weight:600;} .cat-cnt{font-size:12px;color:var(--text-3);}
+    .emoji-row{display:flex;gap:7px;flex-wrap:wrap;}
+    .emoji-opt{width:34px;height:34px;border-radius:8px;background:var(--bg-3);border:2px solid transparent;font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:border-color .12s;}
+    .emoji-opt.selected{border-color:var(--accent);}
+    .spinner{width:24px;height:24px;border-radius:50%;border:2px solid var(--border-2);border-top-color:var(--accent);animation:spin .7s linear infinite;}
+    @keyframes spin{to{transform:rotate(360deg);}}
+    @media(max-width:600px){.collections-wrap{padding:14px;}.coll-grid{grid-template-columns:1fr;}.lang-grid{grid-template-columns:repeat(2,1fr);}.cat-grid{grid-template-columns:repeat(2,1fr);}}
   </style>
 </head>
 <body>
-
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 <div class="app-shell">
   <aside class="sidebar" id="sidebar"></aside>
-
   <div class="main-content">
     <div class="topbar">
       <button class="menu-toggle" id="menuToggle" title="Menu">
@@ -124,143 +48,107 @@
       <span class="page-title">Collections</span>
       <div class="topbar-actions">
         <button class="btn btn-primary" id="newCollBtn" style="padding:6px 13px;font-size:13px">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          New
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> New
         </button>
       </div>
     </div>
-
     <div class="collections-wrap">
       <div class="section-title">My Collections</div>
-      <div class="coll-grid" id="collGrid"></div>
-
+      <div class="coll-grid" id="collGrid"><div style="padding:20px;text-align:center;color:var(--text-3);display:flex;align-items:center;gap:10px"><div class="spinner"></div><span style="font-size:13px">Loading…</span></div></div>
       <div class="section-title">Browse by Language</div>
       <div class="lang-grid" id="langGrid"></div>
-
       <div class="section-title">Browse by Category</div>
       <div class="cat-grid" id="catGrid"></div>
     </div>
   </div>
 </div>
 
-<!-- New Collection Modal -->
 <div class="modal-backdrop" id="newCollModal">
   <div class="modal">
-    <div class="modal-head">
-      <h2>New Collection</h2>
-      <button class="modal-close" onclick="closeNewColl()">✕</button>
-    </div>
+    <div class="modal-head"><h2>New Collection</h2><button class="modal-close" onclick="closeNewColl()">✕</button></div>
     <div class="modal-body">
-      <div class="form-group">
-        <label>Collection name</label>
-        <input type="text" id="cName" placeholder="e.g. Python Interview Prep" maxlength="50" />
-      </div>
-      <div class="form-group">
-        <label>Icon</label>
-        <div class="emoji-row" id="emojiRow"></div>
-      </div>
+      <div class="form-group"><label>Collection name</label><input type="text" id="cName" placeholder="e.g. Python Interview Prep" maxlength="50" /></div>
+      <div class="form-group"><label>Icon</label><div class="emoji-row" id="emojiRow"></div></div>
     </div>
     <div class="modal-foot">
-      <button class="btn btn-ghost"   onclick="closeNewColl()">Cancel</button>
-      <button class="btn btn-primary" onclick="saveNewColl()">Create</button>
+      <button class="btn btn-ghost" onclick="closeNewColl()">Cancel</button>
+      <button class="btn btn-primary" id="saveCollBtn">Create</button>
     </div>
   </div>
 </div>
-
 <div id="toast"></div>
 
 <script src="../js/data.js"></script>
 <script src="../js/ui.js"></script>
+<script src="../js/supabase.js"></script>
 <script>
-  var ICONS    = ['📦','🚀','🔥','💡','📚','🎯','🛠','⚡','🌟','🧪','🔐','🎨','📊','🌐','🗄'];
+  var ICONS = ['📦','🚀','🔥','💡','📚','🎯','🛠','⚡','🌟','🧪','🔐','🎨','📊','🌐','🗄'];
   var selectedIcon = ICONS[0];
-
-  SV.initStore();
+  var allSnippets = [], allColls = [];
   window._activePage = 'collections';
-  initSidebar('collections');
 
-  var getCollections  = SV.getCollections;
-  var saveCollections = SV.saveCollections;
+  document.addEventListener('supabase:ready', async function() {
+    try { await SB.requireAuth(); } catch(e) { return; }
+    applyTheme(); initSidebar('collections');
+    document.getElementById('emojiRow').innerHTML = ICONS.map(function(e,i){
+      return '<div class="emoji-opt '+(i===0?'selected':'')+'" onclick="selectIcon(\''+e+'\',this)">'+e+'</div>';
+    }).join('');
+    try {
+      var results = await Promise.all([SB.getSnippets(), SB.getCollections()]);
+      allSnippets = results[0]; allColls = results[1];
+      renderCollections(); renderLangs(); renderCats();
+    } catch(e) { showToast('Failed to load','⚠'); }
+  });
 
-  /* ── Custom collections ─────────────────────────────────────── */
   function renderCollections() {
-    var colls    = getCollections();
-    var snippets = SV.getSnippets();
-    var grid     = document.getElementById('collGrid');
-
-    if (!colls.length) {
-      grid.innerHTML = '<div class="empty-coll"><div>📦</div><p>No collections yet.<br>Create one to group your snippets.</p></div>';
-      return;
+    var grid = document.getElementById('collGrid');
+    if (!allColls.length) {
+      grid.innerHTML = '<div class="empty-coll"><div>📦</div><p>No collections yet.<br>Create one to group your snippets.</p></div>'; return;
     }
-
-    grid.innerHTML = colls.map(function(c) {
-      var members = snippets.filter(function(s){ return (c.snippetIds||[]).includes(s.id); });
-      var preview = members.slice(0,3).map(function(s){
-        return '<span class="coll-snip-pill">' + SV.escapeHtml(s.title) + '</span>';
-      }).join('');
-      if (members.length > 3) preview += '<span class="coll-snip-pill">+' + (members.length-3) + ' more</span>';
-
-      return '<div class="coll-card">' +
-        '<div class="coll-icon">' + c.icon + '</div>' +
-        '<div class="coll-name">'  + SV.escapeHtml(c.name) + '</div>' +
-        '<div class="coll-count">' + members.length + ' snippet' + (members.length!==1?'s':'') + '</div>' +
-        (members.length ? '<div class="coll-preview">' + preview + '</div>' : '') +
-        '<div class="coll-actions">' +
-          '<button class="btn btn-ghost" style="padding:5px 10px;font-size:12px" onclick="viewColl(\'' + c.id + '\')">View</button>' +
-          '<button class="btn btn-danger" style="padding:5px 10px;font-size:12px" onclick="deleteColl(\'' + c.id + '\')">Delete</button>' +
+    grid.innerHTML = allColls.map(function(c) {
+      var members = allSnippets.filter(function(s){ return c.snippetIds.indexOf(s.id)!==-1; });
+      var preview = members.slice(0,3).map(function(s){ return '<span class="coll-snip-pill">'+SV.escapeHtml(s.title)+'</span>'; }).join('');
+      if (members.length>3) preview += '<span class="coll-snip-pill">+'+(members.length-3)+' more</span>';
+      return '<div class="coll-card"><div class="coll-icon">'+c.icon+'</div>'+
+        '<div class="coll-name">'+SV.escapeHtml(c.name)+'</div>'+
+        '<div class="coll-count">'+members.length+' snippet'+(members.length!==1?'s':'')+'</div>'+
+        (members.length?'<div class="coll-preview">'+preview+'</div>':'')+
+        '<div class="coll-actions">'+
+          '<button class="btn btn-danger" style="padding:5px 10px;font-size:12px" onclick="deleteColl(\''+c.id+'\')">Delete</button>'+
         '</div></div>';
     }).join('');
   }
 
-  function viewColl(id)   { location.href = '../index.html?coll=' + id; }
-  function deleteColl(id) {
+  async function deleteColl(id) {
     if (!confirm('Delete this collection?')) return;
-    saveCollections(getCollections().filter(function(c){ return c.id !== id; }));
-    renderCollections();
-    initSidebar('collections');
-    showToast('Collection deleted');
+    try { await SB.deleteCollection(id); allColls = allColls.filter(function(c){return c.id!==id;}); renderCollections(); showToast('Collection deleted'); }
+    catch(e) { showToast('Failed','⚠'); }
   }
-  window.viewColl   = viewColl;
   window.deleteColl = deleteColl;
 
-  /* ── Browse by Language ─────────────────────────────────────── */
   function renderLangs() {
-    var snippets = SV.getSnippets();
-    var counts   = {};
-    snippets.forEach(function(s){ counts[s.language] = (counts[s.language]||0)+1; });
+    var counts = {}; allSnippets.forEach(function(s){ counts[s.language]=(counts[s.language]||0)+1; });
     var langs = SV.LANGUAGES.filter(function(l){ return counts[l.id]; });
-
     document.getElementById('langGrid').innerHTML = langs.length
       ? langs.map(function(l){
-          return '<a class="lang-card" href="../index.html?lang=' + l.id + '">' +
-            '<div class="lang-icon-sm" style="background:' + l.bg + ';color:' + l.color + '">' + l.abbr + '</div>' +
-            '<div><div class="lang-name">' + l.label + '</div><div class="lang-cnt">' + counts[l.id] + ' snippet' + (counts[l.id]!==1?'s':'') + '</div></div>' +
-            '</a>';
+          return '<a class="lang-card" href="../index.html?lang='+l.id+'">'+
+            '<div class="lang-icon-sm" style="background:'+l.bg+';color:'+l.color+'">'+l.abbr+'</div>'+
+            '<div><div class="lang-name">'+l.label+'</div><div class="lang-cnt">'+counts[l.id]+' snippet'+(counts[l.id]!==1?'s':'')+'</div></div></a>';
         }).join('')
       : '<p style="font-size:13px;color:var(--text-3)">No snippets yet.</p>';
   }
 
-  /* ── Browse by Category ─────────────────────────────────────── */
   function renderCats() {
-    var snippets = SV.getSnippets();
-    var counts   = {};
-    snippets.forEach(function(s){ counts[s.category] = (counts[s.category]||0)+1; });
+    var counts = {}; allSnippets.forEach(function(s){ counts[s.category]=(counts[s.category]||0)+1; });
     var cats = SV.CATEGORIES.filter(function(c){ return counts[c.id]; });
-
     document.getElementById('catGrid').innerHTML = cats.length
       ? cats.map(function(c){
-          return '<a class="cat-card" href="../index.html?cat=' + c.id + '">' +
-            '<div class="cat-icon">' + c.icon + '</div>' +
-            '<div><div class="cat-name">' + c.label + '</div><div class="cat-cnt">' + counts[c.id] + ' snippet' + (counts[c.id]!==1?'s':'') + '</div></div>' +
-            '</a>';
+          return '<a class="cat-card" href="../index.html?cat='+c.id+'">'+
+            '<div class="cat-icon">'+c.icon+'</div>'+
+            '<div><div class="cat-name">'+c.label+'</div><div class="cat-cnt">'+counts[c.id]+' snippet'+(counts[c.id]!==1?'s':'')+'</div></div></a>';
         }).join('')
       : '<p style="font-size:13px;color:var(--text-3)">No snippets yet.</p>';
   }
-
-  /* ── New Collection Modal ───────────────────────────────────── */
-  document.getElementById('emojiRow').innerHTML = ICONS.map(function(e,i){
-    return '<div class="emoji-opt ' + (i===0?'selected':'') + '" onclick="selectIcon(\'' + e + '\',this)">' + e + '</div>';
-  }).join('');
 
   function selectIcon(icon, el) {
     selectedIcon = icon;
@@ -270,36 +158,29 @@
   window.selectIcon = selectIcon;
 
   function openNewColl() {
-    document.getElementById('cName').value = '';
-    selectedIcon = ICONS[0];
-    document.querySelectorAll('.emoji-opt').forEach(function(e,i){ e.classList.toggle('selected', i===0); });
+    document.getElementById('cName').value = ''; selectedIcon = ICONS[0];
+    document.querySelectorAll('.emoji-opt').forEach(function(e,i){ e.classList.toggle('selected',i===0); });
     document.getElementById('newCollModal').classList.add('open');
-    setTimeout(function(){ document.getElementById('cName').focus(); }, 50);
+    setTimeout(function(){ document.getElementById('cName').focus(); },50);
   }
   function closeNewColl() { document.getElementById('newCollModal').classList.remove('open'); }
-  function saveNewColl() {
-    var name = document.getElementById('cName').value.trim();
-    if (!name) { showToast('Name is required', '⚠'); return; }
-    var colls = getCollections();
-    colls.unshift({ id: 'coll_' + Date.now(), name: name, icon: selectedIcon, snippetIds: [], createdAt: Date.now() });
-    saveCollections(colls);
-    closeNewColl();
-    renderCollections();
-    initSidebar('collections');
-    showToast('Collection created');
-  }
   window.closeNewColl = closeNewColl;
-  window.saveNewColl  = saveNewColl;
 
   document.getElementById('newCollBtn').addEventListener('click', openNewColl);
-  document.getElementById('newCollModal').addEventListener('click', function(e){
-    if (e.target === e.currentTarget) closeNewColl();
+  document.getElementById('newCollModal').addEventListener('click', function(e){ if(e.target===e.currentTarget) closeNewColl(); });
+  document.getElementById('saveCollBtn').addEventListener('click', async function() {
+    var name = document.getElementById('cName').value.trim();
+    if (!name) { showToast('Name is required','⚠'); return; }
+    var btn = document.getElementById('saveCollBtn');
+    btn.disabled = true; btn.textContent = 'Creating…';
+    try {
+      var saved = await SB.saveCollection({ _isNew: true, name: name, icon: selectedIcon });
+      allColls.unshift({ id: saved.id, name: saved.name, icon: saved.icon, snippetIds: [], createdAt: Date.now() });
+      closeNewColl(); renderCollections(); initSidebar('collections');
+      showToast('Collection created');
+    } catch(e) { showToast('Failed: '+e.message,'⚠'); }
+    finally { btn.disabled=false; btn.textContent='Create'; }
   });
-
-  renderCollections();
-  renderLangs();
-  renderCats();
 </script>
-<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("../service-worker.js",{scope:"/"}).catch(function(){});}</script>
 </body>
 </html>

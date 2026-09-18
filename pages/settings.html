@@ -1,102 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SnipVault — Settings</title>
   <link rel="stylesheet" href="../css/style.css" />
-  <link rel="manifest" href="../manifest.json" />
-  <link rel="icon" href="../icons/icon-192.png" />
+  <link rel="manifest" href="../manifest.json" /><link rel="icon" href="../icons/icon-192.png" />
   <meta name="theme-color" content="#2e9de4" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <link rel="apple-touch-icon" href="../icons/icon-192.png" />
   <style>
-    .settings-wrap { padding: 20px 24px; max-width: 620px; width: 100%; }
-
-    .settings-section {
-      background: var(--bg-2); border: 1px solid var(--border);
-      border-radius: var(--radius-lg); margin-bottom: 16px; overflow: hidden;
-    }
-    .settings-section-head {
-      padding: 12px 16px; border-bottom: 1px solid var(--border);
-      font-size: 13px; font-weight: 700; color: var(--text);
-      display: flex; align-items: center; gap: 8px;
-    }
-    .settings-row {
-      padding: 13px 16px;
-      display: flex; align-items: center; justify-content: space-between; gap: 16px;
-      border-bottom: 1px solid var(--border);
-    }
-    .settings-row:last-child { border-bottom: none; }
-    .row-label { font-size: 13px; font-weight: 500; }
-    .row-desc  { font-size: 12px; color: var(--text-3); margin-top: 2px; }
-
-    /* Toggle switch */
-    .toggle { position: relative; width: 40px; height: 22px; flex-shrink: 0; }
-    .toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
-    .toggle-track {
-      position: absolute; inset: 0;
-      background: var(--bg-3); border: 1px solid var(--border-2);
-      border-radius: 20px; cursor: pointer; transition: background .2s;
-    }
-    .toggle-track::after {
-      content: ''; position: absolute; left: 3px; top: 3px;
-      width: 14px; height: 14px; background: var(--text-3);
-      border-radius: 50%; transition: transform .2s, background .2s;
-    }
-    .toggle input:checked + .toggle-track { background: var(--accent); border-color: var(--accent); }
-    .toggle input:checked + .toggle-track::after { transform: translateX(18px); background: #fff; }
-
-    .inline-select {
-      background: var(--bg-3); border: 1px solid var(--border);
-      border-radius: var(--radius); color: var(--text);
-      font-size: 12px; padding: 5px 8px; outline: none; font-family: var(--sans);
-    }
-
-    /* Stats */
-    .stat-grid {
-      display: grid; grid-template-columns: repeat(3, 1fr);
-      gap: 1px; background: var(--border);
-    }
-    .stat-item { background: var(--bg-2); padding: 14px 16px; }
-    .stat-num  { font-size: 22px; font-weight: 700; color: var(--text); }
-    .stat-name { font-size: 12px; color: var(--text-3); margin-top: 2px; }
-
-    /* Danger zone */
-    .danger-zone { border-color: var(--danger-bd) !important; }
-    .danger-zone .settings-section-head { color: var(--danger-fg); border-color: var(--danger-bd); }
-
-    /* Theme preview strip */
-    .theme-row { display: flex; gap: 8px; }
-    .theme-opt {
-      flex: 1; padding: 10px 12px; border-radius: var(--radius);
-      border: 2px solid var(--border); cursor: pointer;
-      display: flex; align-items: center; gap: 8px;
-      font-size: 13px; font-weight: 500; transition: border-color .15s;
-      background: var(--bg);
-    }
-    .theme-opt:hover { border-color: var(--border-2); }
-    .theme-opt.selected { border-color: var(--accent); color: var(--accent); }
-    .theme-swatch {
-      width: 18px; height: 18px; border-radius: 50%;
-      border: 2px solid var(--border-2); flex-shrink: 0;
-    }
-
-    @media (max-width: 600px) {
-      .settings-wrap { padding: 14px; }
-      .stat-grid { grid-template-columns: repeat(3,1fr); }
-      .settings-row { flex-direction: column; align-items: flex-start; gap: 10px; }
-      .settings-row .row-right { align-self: flex-end; }
-    }
+    .settings-wrap{padding:20px 24px;max-width:620px;width:100%;}
+    .settings-section{background:var(--bg-2);border:1px solid var(--border);border-radius:var(--radius-lg);margin-bottom:16px;overflow:hidden;}
+    .settings-section-head{padding:12px 16px;border-bottom:1px solid var(--border);font-size:13px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:8px;}
+    .settings-row{padding:13px 16px;display:flex;align-items:center;justify-content:space-between;gap:16px;border-bottom:1px solid var(--border);}
+    .settings-row:last-child{border-bottom:none;}
+    .row-label{font-size:13px;font-weight:500;} .row-desc{font-size:12px;color:var(--text-3);margin-top:2px;}
+    .toggle{position:relative;width:40px;height:22px;flex-shrink:0;}
+    .toggle input{opacity:0;width:0;height:0;position:absolute;}
+    .toggle-track{position:absolute;inset:0;background:var(--bg-3);border:1px solid var(--border-2);border-radius:20px;cursor:pointer;transition:background .2s;}
+    .toggle-track::after{content:'';position:absolute;left:3px;top:3px;width:14px;height:14px;background:var(--text-3);border-radius:50%;transition:transform .2s,background .2s;}
+    .toggle input:checked+.toggle-track{background:var(--accent);border-color:var(--accent);}
+    .toggle input:checked+.toggle-track::after{transform:translateX(18px);background:#fff;}
+    .inline-select{background:var(--bg-3);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-size:12px;padding:5px 8px;outline:none;font-family:var(--sans);}
+    .stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);}
+    .stat-item{background:var(--bg-2);padding:14px 16px;} .stat-num{font-size:22px;font-weight:700;color:var(--text);} .stat-name{font-size:12px;color:var(--text-3);margin-top:2px;}
+    .danger-zone{border-color:var(--danger-bd)!important;} .danger-zone .settings-section-head{color:var(--danger-fg);border-color:var(--danger-bd);}
+    .theme-row{display:flex;gap:8px;}
+    .theme-opt{flex:1;padding:10px 12px;border-radius:var(--radius);border:2px solid var(--border);cursor:pointer;display:flex;align-items:center;gap:8px;font-size:13px;font-weight:500;transition:border-color .15s;background:var(--bg);}
+    .theme-opt:hover{border-color:var(--border-2);} .theme-opt.selected{border-color:var(--accent);color:var(--accent);}
+    .theme-swatch{width:18px;height:18px;border-radius:50%;border:2px solid var(--border-2);flex-shrink:0;}
+    .user-card{display:flex;align-items:center;gap:14px;padding:14px 16px;}
+    .user-avatar{width:40px;height:40px;border-radius:50%;overflow:hidden;border:2px solid var(--border);flex-shrink:0;background:var(--accent);display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;font-weight:700;}
+    .user-info .user-name{font-size:13px;font-weight:600;} .user-info .user-email{font-size:12px;color:var(--text-3);}
+    .spinner{width:24px;height:24px;border-radius:50%;border:2px solid var(--border-2);border-top-color:var(--accent);animation:spin .7s linear infinite;} @keyframes spin{to{transform:rotate(360deg);}}
+    @media(max-width:600px){.settings-wrap{padding:14px;}.settings-row{flex-direction:column;align-items:flex-start;gap:10px;}.row-right{align-self:flex-end;}.theme-row{width:100%;}}
   </style>
 </head>
 <body>
-
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 <div class="app-shell">
   <aside class="sidebar" id="sidebar"></aside>
-
   <div class="main-content">
     <div class="topbar">
       <button class="menu-toggle" id="menuToggle" title="Menu">
@@ -104,31 +45,33 @@
       </button>
       <span class="page-title">Settings</span>
     </div>
-
     <div class="settings-wrap">
+
+      <!-- Account -->
+      <div class="settings-section">
+        <div class="settings-section-head">👤 Account</div>
+        <div class="user-card" id="userCard"><div class="spinner"></div></div>
+        <div class="settings-row">
+          <div><div class="row-label">Sign out</div><div class="row-desc">You'll be returned to the login page</div></div>
+          <div class="row-right"><button class="btn btn-danger" onclick="SB.signOut()">Sign out</button></div>
+        </div>
+      </div>
 
       <!-- Stats -->
       <div class="settings-section">
         <div class="settings-section-head">📊 Library Stats</div>
-        <div class="stat-grid" id="statGrid"></div>
+        <div class="stat-grid" id="statGrid"><div class="stat-item" style="grid-column:1/-1;display:flex;align-items:center;gap:10px;padding:20px"><div class="spinner"></div><span style="font-size:13px;color:var(--text-3)">Loading…</span></div></div>
       </div>
 
       <!-- Appearance -->
       <div class="settings-section">
         <div class="settings-section-head">🎨 Appearance</div>
         <div class="settings-row">
-          <div>
-            <div class="row-label">Theme</div>
-            <div class="row-desc">Switch between dark and light mode</div>
-          </div>
+          <div><div class="row-label">Theme</div><div class="row-desc">Switch between dark and light mode</div></div>
           <div class="row-right">
             <div class="theme-row">
-              <button class="theme-opt" id="themeDark" onclick="setTheme('dark')">
-                <div class="theme-swatch" style="background:#0f1117"></div> Dark
-              </button>
-              <button class="theme-opt" id="themeLight" onclick="setTheme('light')">
-                <div class="theme-swatch" style="background:#f5f7fa;border-color:#dde1ea"></div> Light
-              </button>
+              <button class="theme-opt" id="themeDark"  onclick="setTheme('dark')"><div class="theme-swatch" style="background:#0f1117"></div> Dark</button>
+              <button class="theme-opt" id="themeLight" onclick="setTheme('light')"><div class="theme-swatch" style="background:#f5f7fa;border-color:#dde1ea"></div> Light</button>
             </div>
           </div>
         </div>
@@ -138,22 +81,12 @@
       <div class="settings-section">
         <div class="settings-section-head">⚙️ General</div>
         <div class="settings-row">
-          <div>
-            <div class="row-label">Default language</div>
-            <div class="row-desc">Pre-selected when creating a new snippet</div>
-          </div>
-          <div class="row-right">
-            <select class="inline-select" id="defLang"></select>
-          </div>
+          <div><div class="row-label">Default language</div><div class="row-desc">Pre-selected when creating a new snippet</div></div>
+          <div class="row-right"><select class="inline-select" id="defLang"></select></div>
         </div>
         <div class="settings-row">
-          <div>
-            <div class="row-label">Default category</div>
-            <div class="row-desc">Pre-selected category for new snippets</div>
-          </div>
-          <div class="row-right">
-            <select class="inline-select" id="defCat"></select>
-          </div>
+          <div><div class="row-label">Default category</div><div class="row-desc">Pre-selected category for new snippets</div></div>
+          <div class="row-right"><select class="inline-select" id="defCat"></select></div>
         </div>
       </div>
 
@@ -161,59 +94,18 @@
       <div class="settings-section">
         <div class="settings-section-head">💾 Data</div>
         <div class="settings-row">
-          <div>
-            <div class="row-label">Export snippets</div>
-            <div class="row-desc">Download all snippets as JSON</div>
-          </div>
-          <div class="row-right">
-            <button class="btn btn-ghost" onclick="exportData()">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-              Export JSON
-            </button>
-          </div>
+          <div><div class="row-label">Export snippets</div><div class="row-desc">Download all snippets as JSON</div></div>
+          <div class="row-right"><button class="btn btn-ghost" id="exportBtn">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Export JSON
+          </button></div>
         </div>
         <div class="settings-row">
-          <div>
-            <div class="row-label">Import snippets</div>
-            <div class="row-desc">Merge from an exported JSON file</div>
-          </div>
-          <div class="row-right">
-            <label class="btn btn-ghost" style="cursor:pointer">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-              Import JSON
-              <input type="file" accept=".json" id="importFile" style="display:none" onchange="importData(event)" />
-            </label>
-          </div>
-        </div>
-        <div class="settings-row">
-          <div>
-            <div class="row-label">Storage used</div>
-            <div class="row-desc">Approximate localStorage usage</div>
-          </div>
-          <span style="font-size:13px;color:var(--text-2)" id="storageSize">—</span>
-        </div>
-      </div>
-
-      <!-- Danger zone -->
-      <div class="settings-section danger-zone">
-        <div class="settings-section-head">⚠️ Danger Zone</div>
-        <div class="settings-row">
-          <div>
-            <div class="row-label">Restore example snippets</div>
-            <div class="row-desc">Re-add the default seed snippets</div>
-          </div>
-          <div class="row-right">
-            <button class="btn btn-ghost" onclick="resetSeed()">Restore examples</button>
-          </div>
-        </div>
-        <div class="settings-row">
-          <div>
-            <div class="row-label">Clear all snippets</div>
-            <div class="row-desc">Permanently delete every snippet</div>
-          </div>
-          <div class="row-right">
-            <button class="btn btn-danger" id="clearAllBtn">Clear library</button>
-          </div>
+          <div><div class="row-label">Import snippets</div><div class="row-desc">Merge from an exported JSON file</div></div>
+          <div class="row-right"><label class="btn btn-ghost" style="cursor:pointer">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            Import JSON<input type="file" accept=".json" id="importFile" style="display:none" />
+          </label></div>
         </div>
       </div>
 
@@ -221,160 +113,117 @@
       <div class="settings-section">
         <div class="settings-section-head">ℹ️ About</div>
         <div class="settings-row">
-          <div>
-            <div class="row-label">SnipVault</div>
-            <div class="row-desc">Personal code snippet library. Data stored in browser localStorage.</div>
-          </div>
-          <span style="font-size:12px;color:var(--text-3)">v0.2.0</span>
+          <div><div class="row-label">SnipVault</div><div class="row-desc">Personal code snippet library. Cloud sync powered by Supabase.</div></div>
+          <span style="font-size:12px;color:var(--text-3)">v1.0.0</span>
         </div>
       </div>
 
     </div>
   </div>
 </div>
-
 <div id="toast"></div>
 
 <script src="../js/data.js"></script>
 <script src="../js/ui.js"></script>
+<script src="../js/supabase.js"></script>
 <script>
-  SV.initStore();
   window._activePage = 'settings';
-  initSidebar('settings');
+  var allSnippets = [];
 
-  /* ── Populate selects ───────────────────────────────────────── */
-  document.getElementById('defLang').innerHTML = buildLangOptions('python');
-  document.getElementById('defCat').innerHTML  = buildCatOptions('snippet');
+  document.addEventListener('supabase:ready', async function() {
+    var user;
+    try { user = await SB.requireAuth(); } catch(e) { return; }
+    applyTheme(); initSidebar('settings');
 
-  /* ── Load saved settings ────────────────────────────────────── */
-  var settings = SV.getSettings();
-  if (settings.defLang) document.getElementById('defLang').value = settings.defLang;
-  if (settings.defCat)  document.getElementById('defCat').value  = settings.defCat;
+    document.getElementById('defLang').innerHTML = buildLangOptions(SV.getSettings().defLang || 'python');
+    document.getElementById('defCat').innerHTML  = buildCatOptions(SV.getSettings().defCat  || 'snippet');
 
-  /* ── Theme ──────────────────────────────────────────────────── */
-  function setTheme(theme) {
-    var s = SV.getSettings();
-    s.theme = theme;
-    SV.saveSettings(s);
-    applyTheme();
+    // Load user card
+    var meta = user.user_metadata || {};
+    var name  = meta.full_name || meta.name || meta.user_name || 'User';
+    var email = user.email || '';
+    var av = document.getElementById('userCard');
+    var avatarSrc = meta.avatar_url || '';
+    av.innerHTML = '<div class="user-avatar">'+(avatarSrc?'<img src="'+avatarSrc+'" width="40" height="40" style="display:block" />':name.charAt(0).toUpperCase())+'</div>'+
+      '<div class="user-info"><div class="user-name">'+SV.escapeHtml(name)+'</div><div class="user-email">'+SV.escapeHtml(email)+'</div></div>';
+
     updateThemeBtns();
-    showToast(theme === 'light' ? 'Light mode on' : 'Dark mode on', '🎨');
+
+    // Load stats
+    try {
+      allSnippets = await SB.getSnippets();
+      renderStats();
+    } catch(e) { document.getElementById('statGrid').innerHTML='<div style="padding:16px;color:var(--text-3);font-size:13px">Failed to load stats.</div>'; }
+  });
+
+  function renderStats() {
+    var langs = new Set(allSnippets.map(function(s){return s.language;})).size;
+    var favs  = allSnippets.filter(function(s){return s.favorited;}).length;
+    document.getElementById('statGrid').innerHTML =
+      '<div class="stat-item"><div class="stat-num">'+allSnippets.length+'</div><div class="stat-name">Snippets</div></div>'+
+      '<div class="stat-item"><div class="stat-num">'+langs+'</div><div class="stat-name">Languages</div></div>'+
+      '<div class="stat-item"><div class="stat-num">'+favs+'</div><div class="stat-name">Favorites</div></div>';
+  }
+
+  // Theme
+  function setTheme(theme) {
+    var s = SV.getSettings(); s.theme = theme; SV.saveSettings(s);
+    applyTheme(); updateThemeBtns();
+    showToast(theme==='light'?'Light mode on':'Dark mode on','🎨');
   }
   function updateThemeBtns() {
-    var theme = SV.getSettings().theme || 'dark';
-    document.getElementById('themeDark').classList.toggle('selected',  theme === 'dark');
-    document.getElementById('themeLight').classList.toggle('selected', theme === 'light');
+    var t = SV.getSettings().theme || 'dark';
+    document.getElementById('themeDark').classList.toggle('selected',  t==='dark');
+    document.getElementById('themeLight').classList.toggle('selected', t==='light');
   }
   window.setTheme = setTheme;
-  updateThemeBtns();
 
-  /* ── Stats ──────────────────────────────────────────────────── */
-  function renderStats() {
-    var snippets = SV.getSnippets();
-    var langs    = new Set(snippets.map(function(s){ return s.language; })).size;
-    var favs     = snippets.filter(function(s){ return s.favorited; }).length;
-    document.getElementById('statGrid').innerHTML =
-      '<div class="stat-item"><div class="stat-num">' + snippets.length + '</div><div class="stat-name">Snippets</div></div>' +
-      '<div class="stat-item"><div class="stat-num">' + langs + '</div><div class="stat-name">Languages</div></div>' +
-      '<div class="stat-item"><div class="stat-num">' + favs + '</div><div class="stat-name">Favorites</div></div>';
-
-    var raw   = localStorage.getItem('snipvault_snippets') || '';
-    var bytes = new Blob([raw]).size;
-    document.getElementById('storageSize').textContent =
-      bytes < 1024 ? bytes + ' B' : (bytes / 1024).toFixed(1) + ' KB';
-  }
-
-  /* ── Save general settings on change ───────────────────────── */
+  // General settings
   document.getElementById('defLang').addEventListener('change', saveGeneral);
   document.getElementById('defCat').addEventListener('change',  saveGeneral);
   function saveGeneral() {
     var s = SV.getSettings();
     s.defLang = document.getElementById('defLang').value;
     s.defCat  = document.getElementById('defCat').value;
-    SV.saveSettings(s);
-    showToast('Settings saved');
+    SV.saveSettings(s); showToast('Settings saved');
   }
 
-  /* ── Export ─────────────────────────────────────────────────── */
-  function exportData() {
-    var data = JSON.stringify(SV.getSnippets(), null, 2);
-    var blob = new Blob([data], { type: 'application/json' });
-    var a    = document.createElement('a');
-    a.href   = URL.createObjectURL(blob);
-    a.download = 'snipvault-export-' + new Date().toISOString().slice(0,10) + '.json';
-    a.click();
-    showToast('Export downloaded');
-  }
+  // Export
+  document.getElementById('exportBtn').addEventListener('click', async function() {
+    try {
+      var data = JSON.stringify(allSnippets, null, 2);
+      var blob = new Blob([data],{type:'application/json'});
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'snipvault-export-'+new Date().toISOString().slice(0,10)+'.json';
+      a.click(); showToast('Export downloaded');
+    } catch(e) { showToast('Export failed','⚠'); }
+  });
 
-  /* ── Import ─────────────────────────────────────────────────── */
-  function importData(e) {
-    var file = e.target.files[0];
-    if (!file) return;
+  // Import
+  document.getElementById('importFile').addEventListener('change', async function(e) {
+    var file = e.target.files[0]; if (!file) return;
     var reader = new FileReader();
-    reader.onload = function(ev) {
+    reader.onload = async function(ev) {
       try {
         var imported = JSON.parse(ev.target.result);
         if (!Array.isArray(imported)) throw new Error('Not an array');
-        var existing   = SV.getSnippets();
-        var existingIds = new Set(existing.map(function(s){ return s.id; }));
+        var existingIds = new Set(allSnippets.map(function(s){return s.id;}));
         var added = 0;
-        imported.forEach(function(s) {
-          if (s.id && s.title && s.code && !existingIds.has(s.id)) {
-            existing.push(s); added++;
+        for (var i=0; i<imported.length; i++) {
+          var s = imported[i];
+          if (s.title && s.code && !existingIds.has(s.id)) {
+            await SB.saveSnippet(Object.assign({},s,{_isNew:true,id:null}));
+            added++;
           }
-        });
-        localStorage.setItem('snipvault_snippets', JSON.stringify(existing));
-        renderStats();
-        initSidebar('settings');
-        showToast('Imported ' + added + ' new snippet' + (added !== 1 ? 's' : ''));
-      } catch(err) {
-        showToast('Invalid JSON file', '⚠');
-      }
+        }
+        allSnippets = await SB.getSnippets();
+        renderStats(); initSidebar('settings');
+        showToast('Imported '+added+' new snippet'+(added!==1?'s':''));
+      } catch(err) { showToast('Invalid JSON file','⚠'); }
     };
-    reader.readAsText(file);
-    e.target.value = '';
-  }
-
-  /* ── Clear all — FIXED ─────────────────────────────────────── */
-  document.getElementById('clearAllBtn').addEventListener('click', function() {
-    if (!confirm('Delete ALL snippets? This cannot be undone.')) return;
-    localStorage.removeItem('snipvault_snippets');
-    // Re-init store so it's an empty array (not null → seed)
-    localStorage.setItem('snipvault_snippets', JSON.stringify([]));
-    renderStats();
-    initSidebar('settings');
-    showToast('Library cleared');
+    reader.readAsText(file); e.target.value='';
   });
-
-  /* ── Restore seed ───────────────────────────────────────────── */
-  function resetSeed() {
-    var existing    = SV.getSnippets();
-    var existingIds = new Set(existing.map(function(s){ return s.id; }));
-    var seedIds     = ['seed1','seed2','seed3','seed4','seed5','seed6','seed7','seed8'];
-    var missing     = seedIds.filter(function(id){ return !existingIds.has(id); });
-
-    if (!missing.length) {
-      showToast('Example snippets already present', 'ℹ');
-      return;
-    }
-    // Clear and let initStore re-seed, then merge back user snippets
-    var userSnippets = existing.filter(function(s){ return !seedIds.includes(s.id); });
-    localStorage.removeItem('snipvault_snippets');
-    SV.initStore(); // seeds the defaults
-    var seeded = SV.getSnippets();
-    var merged = seeded.concat(userSnippets);
-    localStorage.setItem('snipvault_snippets', JSON.stringify(merged));
-    renderStats();
-    initSidebar('settings');
-    showToast('Example snippets restored');
-  }
-
-  window.exportData = exportData;
-  window.importData = importData;
-  window.resetSeed  = resetSeed;
-
-  renderStats();
 </script>
-<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("../service-worker.js",{scope:"/"}).catch(function(){});}</script>
 </body>
 </html>

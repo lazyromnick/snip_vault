@@ -8,125 +8,49 @@
   <link rel="manifest" href="../manifest.json" />
   <link rel="icon" href="../icons/icon-192.png" />
   <meta name="theme-color" content="#2e9de4" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <link rel="apple-touch-icon" href="../icons/icon-192.png" />
   <style>
     .view-wrap { padding: 20px 24px; max-width: 860px; width: 100%; }
-
-    .breadcrumb {
-      display: flex; align-items: center; gap: 6px;
-      font-size: 12px; color: var(--text-3); margin-bottom: 18px;
-      flex-wrap: wrap;
-    }
-    .breadcrumb a { color: var(--text-3); }
-    .breadcrumb a:hover { color: var(--accent); }
-
-    .snippet-header { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 20px; }
-    .snip-lang-badge {
-      width: 46px; height: 46px; border-radius: 12px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 12px; font-weight: 800; letter-spacing: -.5px; flex-shrink: 0;
-    }
-    .snip-meta { flex: 1; min-width: 0; }
-    .snip-title { font-size: 20px; font-weight: 700; letter-spacing: -.3px; word-break: break-word; }
-    .snip-desc  { font-size: 13px; color: var(--text-2); margin-top: 4px; }
-    .snip-pills { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
-    .pill {
-      display: inline-flex; align-items: center; gap: 5px;
-      font-size: 12px; padding: 3px 10px;
-      border-radius: 20px; border: 1px solid var(--border);
-      background: var(--bg-2); color: var(--text-2);
-    }
-
-    .action-bar { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
-
-    .btn-fav { background: var(--bg-2); color: var(--text-2); border: 1px solid var(--border); }
-    .btn-fav.active { background: #2e2400; color: #f5c518; border-color: #5e4800; }
-    body.light .btn-fav.active { background: #fef9c3; color: #854d0e; border-color: #fde68a; }
-
-    /* Collection picker modal */
-    .coll-list { display: flex; flex-direction: column; gap: 6px; max-height: 260px; overflow-y: auto; }
-    .coll-pick-item {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 10px 12px; border-radius: var(--radius);
-      background: var(--bg); border: 1px solid var(--border);
-      cursor: pointer; transition: border-color .12s;
-    }
-    .coll-pick-item:hover { border-color: var(--border-2); }
-    .coll-pick-item.in-coll { border-color: var(--accent); background: var(--accent-2); }
-    .coll-pick-left { display: flex; align-items: center; gap: 10px; }
-    .coll-pick-icon { font-size: 18px; }
-    .coll-pick-name { font-size: 13px; font-weight: 500; }
-    .coll-pick-check {
-      width: 18px; height: 18px; border-radius: 50%;
-      border: 2px solid var(--border-2);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 11px; flex-shrink: 0;
-      transition: background .12s, border-color .12s;
-    }
-    .coll-pick-item.in-coll .coll-pick-check {
-      background: var(--accent); border-color: var(--accent); color: #fff;
-    }
-    .coll-empty-msg { font-size: 13px; color: var(--text-3); text-align: center; padding: 20px 0; }
-
-    /* Snippet's current collections chip strip */
-    .coll-chips { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px; }
-    .coll-chip {
-      display: inline-flex; align-items: center; gap: 5px;
-      font-size: 11px; padding: 3px 9px 3px 7px;
-      border-radius: 20px; background: var(--accent-2);
-      color: var(--accent); border: 1px solid var(--accent);
-    }
-
-    .code-panel {
-      background: var(--bg); border: 1px solid var(--border);
-      border-radius: var(--radius-lg); overflow: hidden;
-    }
-    .code-panel-head {
-      padding: 9px 14px; border-bottom: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: space-between;
-      background: var(--bg-2);
-    }
-    .lang-label { font-size: 12px; font-weight: 600; color: var(--text-2); display: flex; align-items: center; gap: 6px; }
-    .line-count { font-size: 11px; color: var(--text-3); }
-    .code-view {
-      padding: 16px 18px; font-family: var(--mono); font-size: 13px;
-      line-height: 1.75; color: var(--text); overflow-x: auto;
-      display: flex; gap: 0;
-    }
-    .line-num-col {
-      user-select: none; text-align: right; padding-right: 16px;
-      color: var(--text-3); font-size: 12px; min-width: 32px;
-      line-height: 1.75; border-right: 1px solid var(--border);
-      margin-right: 16px; flex-shrink: 0;
-    }
-    .code-body { flex: 1; overflow-x: auto; white-space: pre; }
-
-    .confirm-bar {
-      display: none; align-items: center; gap: 10px;
-      padding: 11px 14px; background: var(--danger-bg);
-      border: 1px solid var(--danger-bd); border-radius: var(--radius);
-      margin-bottom: 14px; font-size: 13px; color: var(--danger-fg);
-      flex-wrap: wrap;
-    }
-    .confirm-bar.show { display: flex; }
-
-    .meta-card {
-      margin-top: 16px; background: var(--bg-2); border: 1px solid var(--border);
-      border-radius: var(--radius-lg); padding: 14px 18px;
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 14px;
-    }
-    .meta-item { display: flex; flex-direction: column; gap: 3px; }
-    .meta-label { font-size: 11px; color: var(--text-3); font-weight: 700; text-transform: uppercase; letter-spacing: .06em; }
-    .meta-value { font-size: 13px; color: var(--text); }
-
-    /* Inline edit modal reuse global .modal-backdrop */
-    @media (max-width: 600px) {
-      .view-wrap { padding: 14px; }
-      .snip-title { font-size: 17px; }
-      .action-bar .btn span { display: none; }
-    }
+    .breadcrumb { display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-3);margin-bottom:18px;flex-wrap:wrap; }
+    .breadcrumb a:hover { color:var(--accent); }
+    .snippet-header { display:flex;align-items:flex-start;gap:14px;margin-bottom:20px; }
+    .snip-lang-badge { width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;letter-spacing:-.5px;flex-shrink:0; }
+    .snip-meta { flex:1;min-width:0; }
+    .snip-title { font-size:20px;font-weight:700;letter-spacing:-.3px;word-break:break-word; }
+    .snip-desc  { font-size:13px;color:var(--text-2);margin-top:4px; }
+    .snip-pills { display:flex;gap:6px;flex-wrap:wrap;margin-top:10px; }
+    .pill { display:inline-flex;align-items:center;gap:5px;font-size:12px;padding:3px 10px;border-radius:20px;border:1px solid var(--border);background:var(--bg-2);color:var(--text-2); }
+    .action-bar { display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap; }
+    .btn-fav { background:var(--bg-2);color:var(--text-2);border:1px solid var(--border); }
+    .btn-fav.active { background:#2e2400;color:#f5c518;border-color:#5e4800; }
+    body.light .btn-fav.active { background:#fef9c3;color:#854d0e;border-color:#fde68a; }
+    .code-panel { background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden; }
+    .code-panel-head { padding:9px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--bg-2); }
+    .lang-label { font-size:12px;font-weight:600;color:var(--text-2);display:flex;align-items:center;gap:6px; }
+    .line-count { font-size:11px;color:var(--text-3); }
+    .code-view { padding:16px 18px;font-family:var(--mono);font-size:13px;line-height:1.75;color:var(--text);overflow-x:auto;display:flex;gap:0; }
+    .line-num-col { user-select:none;text-align:right;padding-right:16px;color:var(--text-3);font-size:12px;min-width:32px;line-height:1.75;border-right:1px solid var(--border);margin-right:16px;flex-shrink:0; }
+    .code-body { flex:1;overflow-x:auto;white-space:pre; }
+    .confirm-bar { display:none;align-items:center;gap:10px;padding:11px 14px;background:var(--danger-bg);border:1px solid var(--danger-bd);border-radius:var(--radius);margin-bottom:14px;font-size:13px;color:var(--danger-fg);flex-wrap:wrap; }
+    .confirm-bar.show { display:flex; }
+    .meta-card { margin-top:16px;background:var(--bg-2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 18px;display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:14px; }
+    .meta-item { display:flex;flex-direction:column;gap:3px; }
+    .meta-label { font-size:11px;color:var(--text-3);font-weight:700;text-transform:uppercase;letter-spacing:.06em; }
+    .meta-value { font-size:13px;color:var(--text); }
+    .coll-list { display:flex;flex-direction:column;gap:6px;max-height:260px;overflow-y:auto; }
+    .coll-pick-item { display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:var(--radius);background:var(--bg);border:1px solid var(--border);cursor:pointer;transition:border-color .12s; }
+    .coll-pick-item:hover { border-color:var(--border-2); }
+    .coll-pick-item.in-coll { border-color:var(--accent);background:var(--accent-2); }
+    .coll-pick-left { display:flex;align-items:center;gap:10px; }
+    .coll-pick-icon { font-size:18px; }
+    .coll-pick-name { font-size:13px;font-weight:500; }
+    .coll-pick-check { width:18px;height:18px;border-radius:50%;border:2px solid var(--border-2);display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;transition:background .12s,border-color .12s; }
+    .coll-pick-item.in-coll .coll-pick-check { background:var(--accent);border-color:var(--accent);color:#fff; }
+    .coll-empty-msg { font-size:13px;color:var(--text-3);text-align:center;padding:20px 0; }
+    .coll-chips { display:flex;flex-wrap:wrap;gap:5px;margin-top:10px; }
+    .coll-chip { display:inline-flex;align-items:center;gap:5px;font-size:11px;padding:3px 9px 3px 7px;border-radius:20px;background:var(--accent-2);color:var(--accent);border:1px solid var(--accent); }
+    .spinner { width:24px;height:24px;border-radius:50%;border:2px solid var(--border-2);border-top-color:var(--accent);animation:spin .7s linear infinite; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    @media (max-width:600px) { .view-wrap{padding:14px;} .snip-title{font-size:17px;} .action-bar .btn span{display:none;} }
   </style>
 </head>
 <body>
@@ -134,7 +58,6 @@
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 <div class="app-shell">
   <aside class="sidebar" id="sidebar"></aside>
-
   <div class="main-content">
     <div class="topbar">
       <button class="menu-toggle" id="menuToggle" title="Menu">
@@ -142,20 +65,18 @@
       </button>
       <span class="page-title" id="topTitle">Snippet</span>
       <div class="topbar-actions">
-        <a href="../index.html">
-          <button class="btn-icon" title="Back to library">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-          </button>
-        </a>
+        <a href="../index.html"><button class="btn-icon" title="Back">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        </button></a>
       </div>
     </div>
 
-    <div class="view-wrap" id="viewWrap">
-      <div class="breadcrumb">
-        <a href="../index.html">Library</a>
-        <span>›</span>
-        <span id="bcTitle">Snippet</span>
-      </div>
+    <div id="loadingWrap" style="display:flex;align-items:center;justify-content:center;padding:80px;gap:12px;color:var(--text-3)">
+      <div class="spinner"></div><span style="font-size:13px">Loading…</span>
+    </div>
+
+    <div class="view-wrap" id="viewWrap" style="display:none">
+      <div class="breadcrumb"><a href="../index.html">Library</a><span>›</span><span id="bcTitle">Snippet</span></div>
 
       <div class="snippet-header">
         <div class="snip-lang-badge" id="langBadge"></div>
@@ -182,13 +103,13 @@
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="favIcon"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
           <span id="favLabel">Favorite</span>
         </button>
+        <button class="btn btn-ghost" id="collBtn">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+          <span>Collections</span>
+        </button>
         <button class="btn btn-ghost" id="editBtn">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
           <span>Edit</span>
-        </button>
-        <button class="btn btn-ghost" id="collBtn">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
-          <span>Add to collection</span>
         </button>
         <button class="btn btn-danger" id="deleteBtn">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
@@ -198,10 +119,7 @@
 
       <div class="code-panel">
         <div class="code-panel-head">
-          <div class="lang-label">
-            <span id="langDot" style="width:8px;height:8px;border-radius:50%;display:inline-block"></span>
-            <span id="langLabel"></span>
-          </div>
+          <div class="lang-label"><span id="langDot" style="width:8px;height:8px;border-radius:50%;display:inline-block"></span><span id="langLabel"></span></div>
           <span class="line-count" id="lineCount"></span>
         </div>
         <div class="code-view">
@@ -212,7 +130,6 @@
 
       <div class="meta-card" id="metaCard"></div>
 
-      <!-- Collections this snippet belongs to -->
       <div id="collChipsWrap" style="margin-top:12px;display:none">
         <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-3);margin-bottom:6px">In Collections</div>
         <div class="coll-chips" id="collChips"></div>
@@ -221,66 +138,38 @@
   </div>
 </div>
 
-<!-- Collection Picker Modal -->
+<!-- Collection picker -->
 <div class="modal-backdrop" id="collModal">
   <div class="modal" style="max-width:420px">
-    <div class="modal-head">
-      <h2>Add to Collection</h2>
-      <button class="modal-close" onclick="closeCollModal()">✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="coll-list" id="collPickList"></div>
-    </div>
+    <div class="modal-head"><h2>Add to Collection</h2><button class="modal-close" onclick="closeCollModal()">✕</button></div>
+    <div class="modal-body"><div class="coll-list" id="collPickList"></div></div>
     <div class="modal-foot">
       <button class="btn btn-ghost" onclick="closeCollModal()">Done</button>
-      <a href="collections.html">
-        <button class="btn btn-primary" style="border:none">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          New collection
-        </button>
-      </a>
+      <a href="collections.html"><button class="btn btn-primary" style="border:none">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        New collection
+      </button></a>
     </div>
   </div>
 </div>
 
-<!-- Edit Modal -->
+<!-- Edit modal -->
 <div class="modal-backdrop" id="editModal">
   <div class="modal">
-    <div class="modal-head">
-      <h2>Edit Snippet</h2>
-      <button class="modal-close" onclick="closeEdit()">✕</button>
-    </div>
+    <div class="modal-head"><h2>Edit Snippet</h2><button class="modal-close" onclick="closeEdit()">✕</button></div>
     <div class="modal-body">
-      <div class="form-group">
-        <label>Title</label>
-        <input type="text" id="eTitle" maxlength="80" />
-      </div>
-      <div class="form-group">
-        <label>Description</label>
-        <input type="text" id="eDesc" maxlength="120" />
-      </div>
+      <div class="form-group"><label>Title</label><input type="text" id="eTitle" maxlength="80" /></div>
+      <div class="form-group"><label>Description</label><input type="text" id="eDesc" maxlength="120" /></div>
       <div class="form-row">
-        <div class="form-group">
-          <label>Language</label>
-          <select id="eLang"></select>
-        </div>
-        <div class="form-group">
-          <label>Category</label>
-          <select id="eCat"></select>
-        </div>
+        <div class="form-group"><label>Language</label><select id="eLang"></select></div>
+        <div class="form-group"><label>Category</label><select id="eCat"></select></div>
       </div>
-      <div class="form-group">
-        <label>Code</label>
-        <textarea id="eCode" spellcheck="false"></textarea>
-      </div>
-      <div class="form-group">
-        <label>Tags (comma-separated)</label>
-        <input type="text" id="eTags" />
-      </div>
+      <div class="form-group"><label>Code</label><textarea id="eCode" spellcheck="false" style="min-height:160px"></textarea></div>
+      <div class="form-group"><label>Tags (comma-separated)</label><input type="text" id="eTags" /></div>
     </div>
     <div class="modal-foot">
-      <button class="btn btn-ghost"   onclick="closeEdit()">Cancel</button>
-      <button class="btn btn-primary" onclick="saveEdit()">Save changes</button>
+      <button class="btn btn-ghost" onclick="closeEdit()">Cancel</button>
+      <button class="btn btn-primary" id="saveEditBtn">Save changes</button>
     </div>
   </div>
 </div>
@@ -289,200 +178,201 @@
 
 <script src="../js/data.js"></script>
 <script src="../js/ui.js"></script>
+<script src="../js/supabase.js"></script>
 <script>
-  SV.initStore();
   window._activePage = 'index';
-  initSidebar('index');
-
-  /* ── Load snippet ───────────────────────────────────────────── */
+  var snippet = null;
   var id = new URLSearchParams(location.search).get('id');
-  var snippet = id ? SV.getSnippetById(id) : null;
 
-  if (!snippet) {
-    document.getElementById('viewWrap').innerHTML =
-      '<div class="empty-state">' +
-      '<svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>' +
-      '<strong>Snippet not found</strong><p>It may have been deleted.</p>' +
+  document.addEventListener('supabase:ready', async function() {
+    try { await SB.requireAuth(); } catch(e) { return; }
+
+    applyTheme();
+    initSidebar('index');
+    document.getElementById('eLang').innerHTML = buildLangOptions();
+    document.getElementById('eCat').innerHTML  = buildCatOptions();
+
+    if (!id) { showNotFound(); return; }
+
+    try {
+      snippet = await SB.getSnippetById(id);
+      document.getElementById('loadingWrap').style.display = 'none';
+      document.getElementById('viewWrap').style.display = 'block';
+      renderSnippet();
+      wireButtons();
+      renderCollChips();
+    } catch(e) {
+      showNotFound();
+    }
+  });
+
+  function showNotFound() {
+    document.getElementById('loadingWrap').innerHTML =
+      '<div class="empty-state"><strong>Snippet not found</strong><p>It may have been deleted.</p>'+
       '<button class="empty-btn" onclick="location.href=\'../index.html\'">← Back to library</button></div>';
-  } else {
-    renderSnippet();
-    initButtons();
-    renderCollChips();
   }
 
   function renderSnippet() {
     var lang = SV.getLang(snippet.language);
     var cat  = SV.getCat(snippet.category);
-
     document.title = snippet.title + ' — SnipVault';
-    document.getElementById('topTitle').textContent = snippet.title;
-    document.getElementById('bcTitle').textContent  = snippet.title;
+    document.getElementById('topTitle').textContent  = snippet.title;
+    document.getElementById('bcTitle').textContent   = snippet.title;
     document.getElementById('snipTitle').textContent = snippet.title;
     document.getElementById('snipDesc').textContent  = snippet.description || '';
 
     var badge = document.getElementById('langBadge');
-    badge.textContent = lang.abbr;
-    badge.style.background = lang.bg;
-    badge.style.color = lang.color;
-
+    badge.textContent = lang.abbr; badge.style.background = lang.bg; badge.style.color = lang.color;
     document.getElementById('langDot').style.background = lang.color;
     document.getElementById('langLabel').textContent = lang.label;
 
-    // Pills
-    var pillsHtml = '<span class="pill" style="background:' + lang.bg + ';color:' + lang.color + ';border-color:' + lang.color + '33">' + lang.label + '</span>';
-    pillsHtml += '<span class="pill">' + cat.icon + ' ' + cat.label + '</span>';
-    (snippet.tags || []).forEach(function(t) { pillsHtml += '<span class="pill">' + SV.escapeHtml(t) + '</span>'; });
-    document.getElementById('snipPills').innerHTML = pillsHtml;
+    var pills = '<span class="pill" style="background:'+lang.bg+';color:'+lang.color+';border-color:'+lang.color+'33">'+lang.label+'</span>';
+    pills += '<span class="pill">'+cat.icon+' '+cat.label+'</span>';
+    (snippet.tags||[]).forEach(function(t){ pills += '<span class="pill">'+SV.escapeHtml(t)+'</span>'; });
+    document.getElementById('snipPills').innerHTML = pills;
 
-    // Code
     var lines = snippet.code.split('\n');
-    document.getElementById('lineCount').textContent = lines.length + ' line' + (lines.length !== 1 ? 's' : '');
+    document.getElementById('lineCount').textContent = lines.length+' line'+(lines.length!==1?'s':'');
     document.getElementById('lineNums').innerHTML = lines.map(function(_,i){ return '<div>'+(i+1)+'</div>'; }).join('');
     document.getElementById('codeBody').textContent = snippet.code;
 
-    // Meta
     document.getElementById('metaCard').innerHTML =
-      '<div class="meta-item"><div class="meta-label">Language</div><div class="meta-value">' + lang.label + '</div></div>' +
-      '<div class="meta-item"><div class="meta-label">Category</div><div class="meta-value">' + cat.icon + ' ' + cat.label + '</div></div>' +
-      '<div class="meta-item"><div class="meta-label">Lines</div><div class="meta-value">' + lines.length + '</div></div>' +
-      '<div class="meta-item"><div class="meta-label">Created</div><div class="meta-value">' + SV.timeAgo(snippet.createdAt) + '</div></div>' +
-      (snippet.updatedAt ? '<div class="meta-item"><div class="meta-label">Updated</div><div class="meta-value">' + SV.timeAgo(snippet.updatedAt) + '</div></div>' : '') +
-      '<div class="meta-item"><div class="meta-label">Tags</div><div class="meta-value">' + ((snippet.tags||[]).join(', ') || '—') + '</div></div>';
+      '<div class="meta-item"><div class="meta-label">Language</div><div class="meta-value">'+lang.label+'</div></div>'+
+      '<div class="meta-item"><div class="meta-label">Category</div><div class="meta-value">'+cat.icon+' '+cat.label+'</div></div>'+
+      '<div class="meta-item"><div class="meta-label">Lines</div><div class="meta-value">'+lines.length+'</div></div>'+
+      '<div class="meta-item"><div class="meta-label">Created</div><div class="meta-value">'+SV.timeAgo(snippet.createdAt)+'</div></div>'+
+      (snippet.updatedAt?'<div class="meta-item"><div class="meta-label">Updated</div><div class="meta-value">'+SV.timeAgo(snippet.updatedAt)+'</div></div>':'')+
+      '<div class="meta-item"><div class="meta-label">Tags</div><div class="meta-value">'+((snippet.tags||[]).join(', ')||'—')+'</div></div>';
 
     updateFavBtn();
   }
 
   function updateFavBtn() {
-    var btn   = document.getElementById('favBtn');
-    var icon  = document.getElementById('favIcon');
-    var label = document.getElementById('favLabel');
-    if (snippet.favorited) {
-      btn.classList.add('active');
-      icon.setAttribute('fill','currentColor');
-      label.textContent = 'Favorited';
-    } else {
-      btn.classList.remove('active');
-      icon.setAttribute('fill','none');
-      label.textContent = 'Favorite';
-    }
+    var btn = document.getElementById('favBtn');
+    document.getElementById('favIcon').setAttribute('fill', snippet.favorited ? 'currentColor' : 'none');
+    document.getElementById('favLabel').textContent = snippet.favorited ? 'Favorited' : 'Favorite';
+    btn.classList.toggle('active', snippet.favorited);
   }
 
-  function initButtons() {
-    document.getElementById('copyBtn').addEventListener('click', function() {
-      navigator.clipboard.writeText(snippet.code).then(function() { showToast('Copied to clipboard'); });
+  function wireButtons() {
+    document.getElementById('copyBtn').addEventListener('click', function(){
+      navigator.clipboard.writeText(snippet.code).then(function(){ showToast('Copied to clipboard'); });
     });
-    document.getElementById('favBtn').addEventListener('click', function() {
-      snippet.favorited = SV.toggleFavorite(snippet.id);
-      updateFavBtn();
-      showToast(snippet.favorited ? 'Added to favorites' : 'Removed from favorites', snippet.favorited ? '★' : '☆');
+    document.getElementById('favBtn').addEventListener('click', async function(){
+      try {
+        snippet.favorited = await SB.toggleFavorite(snippet.id, snippet.favorited);
+        updateFavBtn();
+        showToast(snippet.favorited ? 'Added to favorites' : 'Removed from favorites', snippet.favorited ? '★' : '☆');
+      } catch(e) { showToast('Failed', '⚠'); }
     });
     document.getElementById('collBtn').addEventListener('click', openCollModal);
     document.getElementById('editBtn').addEventListener('click', openEdit);
-    document.getElementById('deleteBtn').addEventListener('click', function() {
+    document.getElementById('deleteBtn').addEventListener('click', function(){
       document.getElementById('confirmBar').classList.add('show');
     });
-    document.getElementById('cancelDelete').addEventListener('click', function() {
+    document.getElementById('cancelDelete').addEventListener('click', function(){
       document.getElementById('confirmBar').classList.remove('show');
     });
-    document.getElementById('confirmDelete').addEventListener('click', function() {
-      SV.deleteSnippet(snippet.id);
-      showToast('Snippet deleted');
-      setTimeout(function() { location.href = '../index.html'; }, 900);
+    document.getElementById('confirmDelete').addEventListener('click', async function(){
+      try {
+        await SB.deleteSnippet(snippet.id);
+        showToast('Snippet deleted');
+        setTimeout(function(){ location.href = '../index.html'; }, 900);
+      } catch(e) { showToast('Delete failed', '⚠'); }
     });
+    document.getElementById('saveEditBtn').addEventListener('click', saveEdit);
+    document.getElementById('editModal').addEventListener('click', function(e){ if(e.target===e.currentTarget) closeEdit(); });
+    document.getElementById('collModal').addEventListener('click', function(e){ if(e.target===e.currentTarget) closeCollModal(); });
   }
 
-  /* ── Collection picker ──────────────────────────────────────── */
-  function renderCollChips() {
-    var mine = SV.getSnippetCollections(snippet.id);
-    var wrap = document.getElementById('collChipsWrap');
-    var chips = document.getElementById('collChips');
-    if (!mine.length) { wrap.style.display = 'none'; return; }
-    wrap.style.display = 'block';
-    chips.innerHTML = mine.map(function(c){
-      return '<span class="coll-chip">' + c.icon + ' ' + SV.escapeHtml(c.name) + '</span>';
-    }).join('');
-  }
-
-  function openCollModal() {
-    var colls = SV.getCollections();
-    var list  = document.getElementById('collPickList');
-    if (!colls.length) {
-      list.innerHTML = '<div class="coll-empty-msg">No collections yet.<br>Create one first.</div>';
-    } else {
-      list.innerHTML = colls.map(function(c) {
-        var inColl = (c.snippetIds || []).indexOf(snippet.id) !== -1;
-        return '<div class="coll-pick-item ' + (inColl ? 'in-coll' : '') + '" id="cpick_' + c.id + '" onclick="toggleColl(\'' + c.id + '\')">' +
-          '<div class="coll-pick-left">' +
-            '<span class="coll-pick-icon">' + c.icon + '</span>' +
-            '<span class="coll-pick-name">' + SV.escapeHtml(c.name) + '</span>' +
-          '</div>' +
-          '<div class="coll-pick-check">' + (inColl ? '✓' : '') + '</div>' +
-        '</div>';
-      }).join('');
-    }
-    document.getElementById('collModal').classList.add('open');
-  }
-
-  function closeCollModal() {
-    document.getElementById('collModal').classList.remove('open');
-    renderCollChips();
-  }
-
-  function toggleColl(collId) {
-    var el     = document.getElementById('cpick_' + collId);
-    var inColl = el.classList.contains('in-coll');
-    if (inColl) {
-      SV.removeSnippetFromCollection(collId, snippet.id);
-      el.classList.remove('in-coll');
-      el.querySelector('.coll-pick-check').textContent = '';
-      showToast('Removed from collection', '📦');
-    } else {
-      SV.addSnippetToCollection(collId, snippet.id);
-      el.classList.add('in-coll');
-      el.querySelector('.coll-pick-check').textContent = '✓';
-      showToast('Added to collection', '📦');
-    }
-  }
-  window.toggleColl     = toggleColl;
-  window.closeCollModal = closeCollModal;
-
-  /* ── Edit modal ─────────────────────────────────────────────── */
-  document.getElementById('eLang').innerHTML = buildLangOptions();
-  document.getElementById('eCat').innerHTML  = buildCatOptions();
-
+  /* ── Edit ─────────────────────────────────────────────────── */
   function openEdit() {
     document.getElementById('eTitle').value = snippet.title;
     document.getElementById('eDesc').value  = snippet.description || '';
     document.getElementById('eLang').value  = snippet.language;
     document.getElementById('eCat').value   = snippet.category;
     document.getElementById('eCode').value  = snippet.code;
-    document.getElementById('eTags').value  = (snippet.tags || []).join(', ');
+    document.getElementById('eTags').value  = (snippet.tags||[]).join(', ');
     document.getElementById('editModal').classList.add('open');
-    setTimeout(function() { document.getElementById('eTitle').focus(); }, 50);
+    setTimeout(function(){ document.getElementById('eTitle').focus(); }, 50);
   }
   function closeEdit() { document.getElementById('editModal').classList.remove('open'); }
-  function saveEdit() {
+  async function saveEdit() {
     var title = document.getElementById('eTitle').value.trim();
     var code  = document.getElementById('eCode').value.trim();
     if (!title || !code) { showToast('Title and code are required', '⚠'); return; }
-    snippet = Object.assign({}, snippet, {
-      title:       title,
-      description: document.getElementById('eDesc').value.trim(),
-      language:    document.getElementById('eLang').value,
-      category:    document.getElementById('eCat').value,
-      code:        code,
-      tags:        document.getElementById('eTags').value.split(',').map(function(t){ return t.trim(); }).filter(Boolean),
-      updatedAt:   Date.now(),
-    });
-    SV.saveSnippet(snippet);
-    closeEdit();
-    renderSnippet();
-    initSidebar('index');
-    showToast('Snippet updated');
+    var btn = document.getElementById('saveEditBtn');
+    btn.disabled = true; btn.textContent = 'Saving…';
+    try {
+      snippet = await SB.saveSnippet(Object.assign({}, snippet, {
+        title, description: document.getElementById('eDesc').value.trim(),
+        language: document.getElementById('eLang').value,
+        category: document.getElementById('eCat').value,
+        code, tags: document.getElementById('eTags').value.split(',').map(function(t){return t.trim();}).filter(Boolean),
+      }));
+      closeEdit(); renderSnippet(); initSidebar('index');
+      showToast('Snippet updated');
+    } catch(e) { showToast('Update failed: '+e.message,'⚠'); }
+    finally { btn.disabled=false; btn.textContent='Save changes'; }
   }
   window.closeEdit = closeEdit;
-  window.saveEdit  = saveEdit;
+
+  /* ── Collection picker ──────────────────────────────────────── */
+  async function renderCollChips() {
+    try {
+      var mine = await SB.getSnippetCollections(snippet.id);
+      var wrap = document.getElementById('collChipsWrap');
+      if (!mine.length) { wrap.style.display='none'; return; }
+      wrap.style.display = 'block';
+      document.getElementById('collChips').innerHTML = mine.map(function(c){
+        return '<span class="coll-chip">'+c.icon+' '+SV.escapeHtml(c.name)+'</span>';
+      }).join('');
+    } catch(e) {}
+  }
+
+  async function openCollModal() {
+    var list = document.getElementById('collPickList');
+    list.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-3);font-size:13px">Loading…</div>';
+    document.getElementById('collModal').classList.add('open');
+    try {
+      var colls = await SB.getCollections();
+      if (!colls.length) {
+        list.innerHTML = '<div class="coll-empty-msg">No collections yet.<br>Create one first.</div>';
+        return;
+      }
+      list.innerHTML = colls.map(function(c) {
+        var inColl = c.snippetIds.indexOf(snippet.id) !== -1;
+        return '<div class="coll-pick-item '+(inColl?'in-coll':'')+'" id="cpick_'+c.id+'" onclick="toggleColl(\''+c.id+'\')">'+
+          '<div class="coll-pick-left"><span class="coll-pick-icon">'+c.icon+'</span><span class="coll-pick-name">'+SV.escapeHtml(c.name)+'</span></div>'+
+          '<div class="coll-pick-check">'+(inColl?'✓':'')+'</div></div>';
+      }).join('');
+    } catch(e) {
+      list.innerHTML = '<div class="coll-empty-msg">Failed to load collections.</div>';
+    }
+  }
+  function closeCollModal() {
+    document.getElementById('collModal').classList.remove('open');
+    renderCollChips();
+  }
+  async function toggleColl(collId) {
+    var el = document.getElementById('cpick_'+collId);
+    var inColl = el.classList.contains('in-coll');
+    try {
+      if (inColl) {
+        await SB.removeSnippetFromCollection(collId, snippet.id);
+        el.classList.remove('in-coll');
+        el.querySelector('.coll-pick-check').textContent = '';
+        showToast('Removed from collection','📦');
+      } else {
+        await SB.addSnippetToCollection(collId, snippet.id);
+        el.classList.add('in-coll');
+        el.querySelector('.coll-pick-check').textContent = '✓';
+        showToast('Added to collection','📦');
+      }
+    } catch(e) { showToast('Failed','⚠'); }
+  }
+  window.toggleColl     = toggleColl;
+  window.closeCollModal = closeCollModal;
 </script>
-<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("../service-worker.js",{scope:"/"}).catch(function(){});}</script>
 </body>
 </html>

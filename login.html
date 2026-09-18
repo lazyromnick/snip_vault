@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SnipVault — Sign In</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="icons/icon-192.png" />
+  <meta name="theme-color" content="#2e9de4" />
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    body { display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+
+    .login-wrap {
+      width: 100%; max-width: 400px; padding: 24px;
+      display: flex; flex-direction: column; align-items: center; gap: 0;
+    }
+
+    .login-logo {
+      width: 72px; height: 72px; border-radius: 18px;
+      background: var(--accent); display: flex;
+      align-items: center; justify-content: center;
+      font-size: 32px; font-weight: 900; color: #fff;
+      margin-bottom: 18px; letter-spacing: -1px;
+    }
+
+    .login-title {
+      font-size: 22px; font-weight: 800; letter-spacing: -.4px;
+      margin-bottom: 6px;
+    }
+    .login-title span { color: var(--accent); }
+
+    .login-sub {
+      font-size: 14px; color: var(--text-2); text-align: center;
+      margin-bottom: 32px; line-height: 1.6;
+    }
+
+    .login-card {
+      width: 100%; background: var(--bg-2);
+      border: 1px solid var(--border); border-radius: var(--radius-lg);
+      padding: 28px 24px; display: flex; flex-direction: column; gap: 14px;
+    }
+
+    .github-btn {
+      width: 100%; padding: 13px 20px;
+      background: #24292f; color: #fff;
+      border: none; border-radius: var(--radius);
+      font-size: 14px; font-weight: 600;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      cursor: pointer; transition: background .15s;
+    }
+    .github-btn:hover { background: #1a1f24; }
+    .github-btn svg   { flex-shrink: 0; }
+    body.light .github-btn { background: #24292f; }
+
+    .divider {
+      display: flex; align-items: center; gap: 10px;
+      color: var(--text-3); font-size: 12px;
+    }
+    .divider::before, .divider::after {
+      content: ''; flex: 1; height: 1px; background: var(--border);
+    }
+
+    .login-note {
+      font-size: 12px; color: var(--text-3); text-align: center; line-height: 1.6;
+    }
+
+    .features {
+      width: 100%; margin-top: 28px;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .feature-row {
+      display: flex; align-items: flex-start; gap: 12px;
+      font-size: 13px; color: var(--text-2);
+    }
+    .feature-icon {
+      width: 28px; height: 28px; border-radius: 8px;
+      background: var(--accent-2); color: var(--accent);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; flex-shrink: 0; margin-top: 1px;
+    }
+    .feature-label { font-weight: 600; color: var(--text); font-size: 13px; }
+
+    .loading-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,.6); z-index: 999;
+      align-items: center; justify-content: center;
+      flex-direction: column; gap: 14px;
+    }
+    .loading-overlay.show { display: flex; }
+    .spinner {
+      width: 36px; height: 36px; border-radius: 50%;
+      border: 3px solid var(--border-2);
+      border-top-color: var(--accent);
+      animation: spin .7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+<div class="login-wrap">
+  <div class="login-logo">⟨/⟩</div>
+  <div class="login-title">Snip<span>Vault</span></div>
+  <div class="login-sub">Your personal code snippet library.<br>Sign in to access your snippets from any device.</div>
+
+  <div class="login-card">
+    <button class="github-btn" id="githubBtn">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/>
+      </svg>
+      Continue with GitHub
+    </button>
+
+    <div class="divider">or</div>
+
+    <div class="login-note">
+      SnipVault uses GitHub for secure, passwordless sign-in.<br>
+      Your snippets are stored privately in the cloud.
+    </div>
+  </div>
+
+  <div class="features">
+    <div class="feature-row">
+      <div class="feature-icon">☁️</div>
+      <div>
+        <div class="feature-label">Synced across devices</div>
+        Your snippets follow you — phone, tablet, laptop, anywhere.
+      </div>
+    </div>
+    <div class="feature-row">
+      <div class="feature-icon">🔒</div>
+      <div>
+        <div class="feature-label">Private by default</div>
+        Row-level security ensures only you can see your data.
+      </div>
+    </div>
+    <div class="feature-row">
+      <div class="feature-icon">⚡</div>
+      <div>
+        <div class="feature-label">Works offline too</div>
+        Service worker keeps the app available without a connection.
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+  <span style="color:var(--text-2);font-size:13px">Signing in with GitHub…</span>
+</div>
+
+<div id="toast"></div>
+
+<script src="js/data.js"></script>
+<script src="js/supabase.js"></script>
+<script>
+  /* Apply saved theme */
+  (function() {
+    try {
+      var s = JSON.parse(localStorage.getItem('snipvault_settings') || '{}');
+      if (s.theme === 'light') document.body.classList.add('light');
+    } catch(e) {}
+  })();
+
+  /* If already logged in, redirect straight to app */
+  document.addEventListener('supabase:ready', async function() {
+    var session = await SB.getSession();
+    if (session) {
+      location.href = 'index.html';
+      return;
+    }
+  });
+
+  document.getElementById('githubBtn').addEventListener('click', async function() {
+    document.getElementById('loadingOverlay').classList.add('show');
+    await SB.signInWithGitHub();
+    // Page will redirect to GitHub and back — overlay stays until redirect
+  });
+</script>
+</body>
+</html>

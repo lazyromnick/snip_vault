@@ -9,7 +9,6 @@
   <link rel="icon" href="icons/icon-192.png" />
   <meta name="theme-color" content="#2e9de4" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <link rel="apple-touch-icon" href="icons/icon-192.png" />
 </head>
 <body>
@@ -23,12 +22,14 @@
       <button class="menu-toggle" id="menuToggle" title="Menu">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
       </button>
-      <span class="page-title" id="pageTitle">All Snippets</span>
+      <span class="page-title">All Snippets</span>
       <div class="search-wrap">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         <input type="text" id="searchInput" placeholder="Search title, tag, language…" />
       </div>
       <div class="topbar-actions">
+        <!-- User avatar -->
+        <div id="userAvatar" style="width:32px;height:32px;border-radius:50%;overflow:hidden;cursor:pointer;border:2px solid var(--border);flex-shrink:0" title="Account" onclick="showUserMenu()"></div>
         <button class="btn-icon" id="viewToggle" title="Toggle list view">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
         </button>
@@ -39,8 +40,24 @@
     </div>
 
     <div class="filter-bar" id="filterBar"></div>
-    <div id="gridWrap"><div class="card-grid" id="cardGrid"></div></div>
+
+    <!-- Loading state -->
+    <div id="loadingState" style="display:flex;align-items:center;justify-content:center;padding:80px 20px;gap:12px;color:var(--text-3)">
+      <div class="spinner"></div>
+      <span style="font-size:13px">Loading snippets…</span>
+    </div>
+
+    <div id="gridWrap" style="display:none"><div class="card-grid" id="cardGrid"></div></div>
   </div>
+</div>
+
+<!-- User menu dropdown -->
+<div id="userMenu" style="display:none;position:fixed;top:54px;right:16px;z-index:300;background:var(--bg-2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:8px;min-width:200px;box-shadow:0 8px 24px rgba(0,0,0,.3)">
+  <div id="userMenuName" style="padding:8px 10px 10px;font-size:12px;color:var(--text-3);border-bottom:1px solid var(--border);margin-bottom:6px"></div>
+  <button onclick="SB.signOut()" style="width:100%;padding:8px 10px;background:none;border:none;color:var(--danger-fg);font-size:13px;text-align:left;cursor:pointer;border-radius:6px;display:flex;align-items:center;gap:8px">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+    Sign out
+  </button>
 </div>
 
 <!-- New / Edit Snippet Modal -->
@@ -87,121 +104,158 @@
 
 <div id="toast"></div>
 
+<style>
+  .spinner { width:24px;height:24px;border-radius:50%;border:2px solid var(--border-2);border-top-color:var(--accent);animation:spin .7s linear infinite; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  .save-spinner { width:14px;height:14px;border-radius:50%;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;animation:spin .7s linear infinite;display:inline-block; }
+</style>
+
 <script src="js/data.js"></script>
 <script src="js/ui.js"></script>
+<script src="js/supabase.js"></script>
 <script>
-  SV.initStore();
   window._activePage = 'index';
 
-  /* ── State ─────────────────────────────────────────────────── */
   var filterLang = '';
   var filterCat  = '';
   var searchQ    = '';
   var listView   = false;
   var editingId  = null;
+  var allSnippets = [];
+  var currentUser = null;
 
-  /* ── Read URL params ────────────────────────────────────────── */
   var params = new URLSearchParams(location.search);
   if (params.get('lang')) filterLang = params.get('lang');
   if (params.get('cat'))  filterCat  = params.get('cat');
 
-  /* ── Init sidebar ───────────────────────────────────────────── */
-  initSidebar('index');
+  /* ── Boot after Supabase SDK loads ─────────────────────────── */
+  document.addEventListener('supabase:ready', async function() {
+    try {
+      currentUser = await SB.requireAuth();
+    } catch(e) { return; }
 
-  /* ── Populate selects ───────────────────────────────────────── */
-  document.getElementById('fLang').innerHTML = buildLangOptions('python');
-  document.getElementById('fCat').innerHTML  = buildCatOptions('snippet');
+    applyTheme();
+    initSidebar('index');
+    document.getElementById('fLang').innerHTML = buildLangOptions(SV.getSettings().defLang || 'python');
+    document.getElementById('fCat').innerHTML  = buildCatOptions(SV.getSettings().defCat  || 'snippet');
 
-  /* ── Filter bar ─────────────────────────────────────────────── */
+    renderUserAvatar(currentUser);
+    await loadSnippets();
+
+    if (params.get('new') === '1') {
+      history.replaceState({}, '', location.pathname);
+      openModal();
+    }
+
+    wireUI();
+  });
+
+  /* ── Load snippets from Supabase ────────────────────────────── */
+  async function loadSnippets() {
+    try {
+      allSnippets = await SB.getSnippets();
+      document.getElementById('loadingState').style.display = 'none';
+      document.getElementById('gridWrap').style.display = 'block';
+      buildFilterBar();
+      renderGrid();
+      initSidebar('index');
+    } catch(e) {
+      showToast('Failed to load snippets', '⚠');
+      console.error(e);
+    }
+  }
+
+  /* ── Render ─────────────────────────────────────────────────── */
   function buildFilterBar() {
-    var snippets   = SV.getSnippets();
-    var usedLangs  = [];
-    var usedCats   = [];
-    var seenLangs  = {};
-    var seenCats   = {};
-    snippets.forEach(function(s) {
-      if (!seenLangs[s.language]) { seenLangs[s.language] = 1; usedLangs.push(s.language); }
-      if (!seenCats[s.category])  { seenCats[s.category]  = 1; usedCats.push(s.category); }
+    var seen = {langs:{}, cats:{}};
+    var langs = [], cats = [];
+    allSnippets.forEach(function(s) {
+      if (!seen.langs[s.language]) { seen.langs[s.language]=1; langs.push(s.language); }
+      if (!seen.cats[s.category])  { seen.cats[s.category]=1;  cats.push(s.category); }
     });
-
-    var html = '<button class="filter-chip ' + (!filterLang && !filterCat ? 'active' : '') + '" onclick="setFilter(\'\',\'\')">All</button>';
-    usedLangs.forEach(function(id) {
+    var html = '<button class="filter-chip '+ (!filterLang && !filterCat ? 'active':'') +'" onclick="setFilter(\'\',\'\')">All</button>';
+    langs.forEach(function(id) {
       var l = SV.getLang(id);
-      html += '<button class="filter-chip ' + (filterLang === id && !filterCat ? 'active' : '') + '" onclick="setFilter(\'' + id + '\',\'\')">';
-      html += '<span class="chip-dot" style="background:' + l.color + '"></span>' + l.label + '</button>';
+      html += '<button class="filter-chip '+(filterLang===id&&!filterCat?'active':'')+'" onclick="setFilter(\''+id+'\',\'\')">';
+      html += '<span class="chip-dot" style="background:'+l.color+'"></span>'+l.label+'</button>';
     });
-    usedCats.forEach(function(id) {
+    cats.forEach(function(id) {
       var c = SV.getCat(id);
-      html += '<button class="filter-chip ' + (filterCat === id ? 'active' : '') + '" onclick="setFilter(\'\',\'' + id + '\')">';
-      html += c.icon + ' ' + c.label + '</button>';
+      html += '<button class="filter-chip '+(filterCat===id?'active':'')+'" onclick="setFilter(\'\',\''+id+'\')">';
+      html += c.icon+' '+c.label+'</button>';
     });
     document.getElementById('filterBar').innerHTML = html;
   }
 
   function setFilter(lang, cat) {
     filterLang = lang; filterCat = cat;
-    var qs = lang ? '?lang=' + lang : cat ? '?cat=' + cat : location.pathname;
-    history.replaceState({}, '', lang || cat ? '?' + (lang ? 'lang=' + lang : 'cat=' + cat) : location.pathname);
-    renderGrid();
-    buildFilterBar();
+    renderGrid(); buildFilterBar();
   }
   window.setFilter = setFilter;
 
-  /* ── Grid render ────────────────────────────────────────────── */
   function renderGrid() {
-    var snippets = SV.getSnippets();
-    if (filterLang) snippets = snippets.filter(function(s) { return s.language === filterLang; });
-    if (filterCat)  snippets = snippets.filter(function(s) { return s.category  === filterCat; });
+    var snippets = allSnippets.slice();
+    if (filterLang) snippets = snippets.filter(function(s){ return s.language === filterLang; });
+    if (filterCat)  snippets = snippets.filter(function(s){ return s.category  === filterCat; });
     if (searchQ) {
       var q = searchQ.toLowerCase();
-      snippets = snippets.filter(function(s) {
+      snippets = snippets.filter(function(s){
         return s.title.toLowerCase().includes(q) ||
-          (s.description || '').toLowerCase().includes(q) ||
-          (s.tags || []).some(function(t) { return t.toLowerCase().includes(q); }) ||
+          (s.description||'').toLowerCase().includes(q) ||
+          (s.tags||[]).some(function(t){ return t.toLowerCase().includes(q); }) ||
           SV.getLang(s.language).label.toLowerCase().includes(q);
       });
     }
-
     var grid = document.getElementById('cardGrid');
     if (!snippets.length) {
-      grid.innerHTML = '<div class="empty-state">' +
-        '<svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>' +
-        '<strong>No snippets found</strong>' +
-        '<p>' + (searchQ ? 'Try a different search term.' : 'Save your first snippet to get started.') + '</p>' +
+      grid.innerHTML = '<div class="empty-state">'+
+        '<svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>'+
+        '<strong>No snippets found</strong>'+
+        '<p>'+(searchQ?'Try a different search term.':'Save your first snippet to get started.')+'</p>'+
         '<button class="empty-btn" onclick="openModal()">+ New snippet</button></div>';
       return;
     }
-    grid.innerHTML = snippets.map(function(s) { return buildCard(s); }).join('');
+    grid.innerHTML = snippets.map(function(s){ return buildCard(s); }).join('');
   }
 
-  /* ── Search ─────────────────────────────────────────────────── */
-  document.getElementById('searchInput').addEventListener('input', function(e) {
-    searchQ = e.target.value.trim();
-    renderGrid();
+  /* ── User avatar ────────────────────────────────────────────── */
+  function renderUserAvatar(user) {
+    var av   = document.getElementById('userAvatar');
+    var meta = user.user_metadata || {};
+    var src  = meta.avatar_url || meta.picture || '';
+    var name = meta.full_name  || meta.name || meta.user_name || user.email || 'User';
+    document.getElementById('userMenuName').textContent = name;
+    if (src) {
+      av.innerHTML = '<img src="'+src+'" width="32" height="32" style="display:block" />';
+    } else {
+      av.style.cssText += ';background:var(--accent);display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:700';
+      av.textContent = name.charAt(0).toUpperCase();
+    }
+  }
+
+  function showUserMenu() {
+    var m = document.getElementById('userMenu');
+    m.style.display = m.style.display === 'none' ? 'block' : 'none';
+  }
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('#userAvatar') && !e.target.closest('#userMenu')) {
+      document.getElementById('userMenu').style.display = 'none';
+    }
   });
 
-  /* ── View toggle ────────────────────────────────────────────── */
-  document.getElementById('viewToggle').addEventListener('click', function() {
-    listView = !listView;
-    document.getElementById('gridWrap').style.cssText = listView
-      ? '--cols:1' : '';
-    document.getElementById('cardGrid').style.gridTemplateColumns = listView ? '1fr' : '';
-    document.getElementById('viewToggle').classList.toggle('active', listView);
-  });
-
-  /* ── Modal open/close ───────────────────────────────────────── */
+  /* ── Modal ──────────────────────────────────────────────────── */
   function openModal(id) {
     editingId = id || null;
     document.getElementById('modalTitle').textContent = id ? 'Edit Snippet' : 'New Snippet';
     if (id) {
-      var s = SV.getSnippetById(id);
+      var s = allSnippets.find(function(x){ return x.id === id; });
       if (s) {
         document.getElementById('fTitle').value = s.title;
         document.getElementById('fDesc').value  = s.description || '';
         document.getElementById('fLang').value  = s.language;
         document.getElementById('fCat').value   = s.category;
         document.getElementById('fCode').value  = s.code;
-        document.getElementById('fTags').value  = (s.tags || []).join(', ');
+        document.getElementById('fTags').value  = (s.tags||[]).join(', ');
       }
     } else {
       document.getElementById('fTitle').value = '';
@@ -212,7 +266,7 @@
       document.getElementById('fTags').value  = '';
     }
     document.getElementById('modalBackdrop').classList.add('open');
-    setTimeout(function() { document.getElementById('fTitle').focus(); }, 50);
+    setTimeout(function(){ document.getElementById('fTitle').focus(); }, 50);
   }
   window.openModal = openModal;
 
@@ -221,51 +275,63 @@
     editingId = null;
   }
 
-  document.getElementById('openNewBtn').addEventListener('click', function() { openModal(); });
-  document.getElementById('closeModalBtn').addEventListener('click', closeModal);
-  document.getElementById('cancelModalBtn').addEventListener('click', closeModal);
-  document.getElementById('modalBackdrop').addEventListener('click', function(e) {
-    if (e.target === e.currentTarget) closeModal();
-  });
+  /* ── Wire all UI events ─────────────────────────────────────── */
+  function wireUI() {
+    document.getElementById('searchInput').addEventListener('input', function(e){
+      searchQ = e.target.value.trim(); renderGrid();
+    });
+    document.getElementById('viewToggle').addEventListener('click', function(){
+      listView = !listView;
+      document.getElementById('cardGrid').style.gridTemplateColumns = listView ? '1fr' : '';
+      document.getElementById('viewToggle').classList.toggle('active', listView);
+    });
+    document.getElementById('openNewBtn').addEventListener('click', function(){ openModal(); });
+    document.getElementById('closeModalBtn').addEventListener('click', closeModal);
+    document.getElementById('cancelModalBtn').addEventListener('click', closeModal);
+    document.getElementById('modalBackdrop').addEventListener('click', function(e){
+      if (e.target === e.currentTarget) closeModal();
+    });
 
-  /* ── Save snippet ───────────────────────────────────────────── */
-  document.getElementById('saveModalBtn').addEventListener('click', function() {
-    var title = document.getElementById('fTitle').value.trim();
-    var code  = document.getElementById('fCode').value.trim();
-    if (!title) { showToast('Title is required', '⚠'); return; }
-    if (!code)  { showToast('Code cannot be empty', '⚠'); return; }
+    document.getElementById('saveModalBtn').addEventListener('click', async function() {
+      var title = document.getElementById('fTitle').value.trim();
+      var code  = document.getElementById('fCode').value.trim();
+      if (!title) { showToast('Title is required', '⚠'); return; }
+      if (!code)  { showToast('Code cannot be empty', '⚠'); return; }
 
-    var existing = editingId ? SV.getSnippetById(editingId) : null;
-    var snippet = {
-      id:          editingId || SV.generateId(),
-      title:       title,
-      description: document.getElementById('fDesc').value.trim(),
-      language:    document.getElementById('fLang').value,
-      category:    document.getElementById('fCat').value,
-      code:        code,
-      tags:        document.getElementById('fTags').value.split(',').map(function(t) { return t.trim(); }).filter(Boolean),
-      favorited:   existing ? existing.favorited : false,
-      createdAt:   existing ? existing.createdAt : Date.now(),
-      updatedAt:   Date.now(),
-    };
-    SV.saveSnippet(snippet);
-    closeModal();
-    renderGrid();
-    buildFilterBar();
-    initSidebar('index');
-    showToast(editingId ? 'Snippet updated ✓' : 'Snippet saved ✓');
-  });
+      var btn = document.getElementById('saveModalBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="save-spinner"></span> Saving…';
 
-  /* ── Handle ?new=1 from sidebar ─────────────────────────────── */
-  if (params.get('new') === '1') {
-    history.replaceState({}, '', location.pathname);
-    openModal();
+      try {
+        var existing = editingId ? allSnippets.find(function(x){ return x.id===editingId; }) : null;
+        var snippet = {
+          id:          editingId || null,
+          _isNew:      !editingId,
+          title:       title,
+          description: document.getElementById('fDesc').value.trim(),
+          language:    document.getElementById('fLang').value,
+          category:    document.getElementById('fCat').value,
+          code:        code,
+          tags:        document.getElementById('fTags').value.split(',').map(function(t){ return t.trim(); }).filter(Boolean),
+          favorited:   existing ? existing.favorited : false,
+        };
+        var saved = await SB.saveSnippet(snippet);
+        closeModal();
+        await loadSnippets();
+        showToast(editingId ? 'Snippet updated' : 'Snippet saved');
+      } catch(e) {
+        showToast('Save failed: ' + e.message, '⚠');
+        console.error(e);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Save snippet';
+      }
+    });
   }
 
-  /* ── Init ───────────────────────────────────────────────────── */
-  buildFilterBar();
-  renderGrid();
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/service-worker.js').catch(function(){});
+  }
 </script>
-<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("/service-worker.js").catch(function(){});}</script>
 </body>
 </html>

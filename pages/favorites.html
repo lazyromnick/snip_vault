@@ -1,23 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SnipVault — Favorites</title>
   <link rel="stylesheet" href="../css/style.css" />
-  <link rel="manifest" href="../manifest.json" />
-  <link rel="icon" href="../icons/icon-192.png" />
+  <link rel="manifest" href="../manifest.json" /><link rel="icon" href="../icons/icon-192.png" />
   <meta name="theme-color" content="#2e9de4" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <link rel="apple-touch-icon" href="../icons/icon-192.png" />
+  <style>.spinner{width:24px;height:24px;border-radius:50%;border:2px solid var(--border-2);border-top-color:var(--accent);animation:spin .7s linear infinite;}@keyframes spin{to{transform:rotate(360deg);}}</style>
 </head>
 <body>
-
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 <div class="app-shell">
   <aside class="sidebar" id="sidebar"></aside>
-
   <div class="main-content">
     <div class="topbar">
       <button class="menu-toggle" id="menuToggle" title="Menu">
@@ -29,75 +23,70 @@
         <input type="text" id="searchInput" placeholder="Search favorites…" />
       </div>
     </div>
-
     <div class="filter-bar" id="filterBar"></div>
-    <div class="card-grid" id="cardGrid"></div>
+    <div id="loadingState" style="display:flex;align-items:center;justify-content:center;padding:80px;gap:12px;color:var(--text-3)">
+      <div class="spinner"></div><span style="font-size:13px">Loading…</span>
+    </div>
+    <div class="card-grid" id="cardGrid" style="display:none"></div>
   </div>
 </div>
-
 <div id="toast"></div>
-
 <script src="../js/data.js"></script>
 <script src="../js/ui.js"></script>
+<script src="../js/supabase.js"></script>
 <script>
-  SV.initStore();
   window._activePage = 'favorites';
-  initSidebar('favorites');
+  var allFavs = [], searchQ = '', filterLang = '';
 
-  var searchQ    = '';
-  var filterLang = '';
+  document.addEventListener('supabase:ready', async function() {
+    try { await SB.requireAuth(); } catch(e) { return; }
+    applyTheme(); initSidebar('favorites');
+
+    try {
+      var all = await SB.getSnippets();
+      allFavs = all.filter(function(s){ return s.favorited; });
+      document.getElementById('loadingState').style.display = 'none';
+      document.getElementById('cardGrid').style.display = 'grid';
+      buildFilterBar(); renderGrid();
+    } catch(e) { showToast('Failed to load','⚠'); }
+  });
 
   function buildFilterBar() {
-    var favs      = SV.getSnippets().filter(function(s){ return s.favorited; });
-    var seen      = {};
-    var usedLangs = [];
-    favs.forEach(function(s) {
-      if (!seen[s.language]) { seen[s.language] = 1; usedLangs.push(s.language); }
-    });
-
-    var html = '<button class="filter-chip ' + (!filterLang ? 'active' : '') + '" onclick="setLang(\'\')">All</button>';
-    usedLangs.forEach(function(id) {
+    var seen = {}, langs = [];
+    allFavs.forEach(function(s){ if(!seen[s.language]){seen[s.language]=1;langs.push(s.language);} });
+    var html = '<button class="filter-chip '+(!filterLang?'active':'')+'" onclick="setLang(\'\')">All</button>';
+    langs.forEach(function(id){
       var l = SV.getLang(id);
-      html += '<button class="filter-chip ' + (filterLang === id ? 'active' : '') + '" onclick="setLang(\'' + id + '\')">';
-      html += '<span class="chip-dot" style="background:' + l.color + '"></span>' + l.label + '</button>';
+      html += '<button class="filter-chip '+(filterLang===id?'active':'')+'" onclick="setLang(\''+id+'\')">';
+      html += '<span class="chip-dot" style="background:'+l.color+'"></span>'+l.label+'</button>';
     });
     document.getElementById('filterBar').innerHTML = html;
   }
 
-  function setLang(l) { filterLang = l; renderGrid(); buildFilterBar(); }
+  function setLang(l) { filterLang=l; renderGrid(); buildFilterBar(); }
   window.setLang = setLang;
 
   function renderGrid() {
-    var snippets = SV.getSnippets().filter(function(s){ return s.favorited; });
-    if (filterLang) snippets = snippets.filter(function(s){ return s.language === filterLang; });
+    var snippets = allFavs.slice();
+    if (filterLang) snippets = snippets.filter(function(s){ return s.language===filterLang; });
     if (searchQ) {
       var q = searchQ.toLowerCase();
       snippets = snippets.filter(function(s){
-        return s.title.toLowerCase().includes(q) ||
-          (s.description||'').toLowerCase().includes(q) ||
-          (s.tags||[]).some(function(t){ return t.toLowerCase().includes(q); });
+        return s.title.toLowerCase().includes(q)||(s.description||'').toLowerCase().includes(q)||(s.tags||[]).some(function(t){return t.toLowerCase().includes(q);});
       });
     }
-
     var grid = document.getElementById('cardGrid');
     if (!snippets.length) {
-      grid.innerHTML = '<div class="empty-state">' +
-        '<svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>' +
-        '<strong>No favorites yet</strong>' +
-        '<p>Star any snippet from the library to see it here.</p>' +
+      grid.innerHTML = '<div class="empty-state">'+
+        '<svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>'+
+        '<strong>No favorites yet</strong><p>Star any snippet from the library to see it here.</p>'+
         '<button class="empty-btn" onclick="location.href=\'../index.html\'">Browse library</button></div>';
       return;
     }
     grid.innerHTML = snippets.map(function(s){ return buildCard(s); }).join('');
   }
 
-  document.getElementById('searchInput').addEventListener('input', function(e){
-    searchQ = e.target.value.trim(); renderGrid();
-  });
-
-  buildFilterBar();
-  renderGrid();
+  document.getElementById('searchInput').addEventListener('input', function(e){ searchQ=e.target.value.trim(); renderGrid(); });
 </script>
-<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("../service-worker.js",{scope:"/"}).catch(function(){});}</script>
 </body>
 </html>
